@@ -83,13 +83,13 @@ func (z *Client) CreateTicketComment(ctx context.Context, ticketID int64, ticket
 		return TicketComment{}, err
 	}
 
-	result := TicketComment{}
+	result := comment{}
 	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return TicketComment{}, err
 	}
 
-	return result, err
+	return result.Ticket.TicketComment, err
 }
 
 type listTicketCommentsSort string
