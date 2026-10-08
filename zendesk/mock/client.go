@@ -822,6 +822,68 @@ func (mr *ClientMockRecorder) GetBrand(ctx, brandID any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBrand", reflect.TypeOf((*Client)(nil).GetBrand), ctx, brandID)
 }
 
+// GetBrands mocks base method.
+func (m *Client) GetBrands(ctx context.Context, opts *zendesk.BrandListOptions) ([]zendesk.Brand, zendesk.Page, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBrands", ctx, opts)
+	ret0, _ := ret[0].([]zendesk.Brand)
+	ret1, _ := ret[1].(zendesk.Page)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetBrands indicates an expected call of GetBrands.
+func (mr *ClientMockRecorder) GetBrands(ctx, opts any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBrands", reflect.TypeOf((*Client)(nil).GetBrands), ctx, opts)
+}
+
+// GetBrandsCBP mocks base method.
+func (m *Client) GetBrandsCBP(ctx context.Context, opts *zendesk.CBPOptions) ([]zendesk.Brand, zendesk.CursorPaginationMeta, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBrandsCBP", ctx, opts)
+	ret0, _ := ret[0].([]zendesk.Brand)
+	ret1, _ := ret[1].(zendesk.CursorPaginationMeta)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetBrandsCBP indicates an expected call of GetBrandsCBP.
+func (mr *ClientMockRecorder) GetBrandsCBP(ctx, opts any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBrandsCBP", reflect.TypeOf((*Client)(nil).GetBrandsCBP), ctx, opts)
+}
+
+// GetBrandsIterator mocks base method.
+func (m *Client) GetBrandsIterator(ctx context.Context, opts *zendesk.PaginationOptions) *zendesk.Iterator[zendesk.Brand] {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBrandsIterator", ctx, opts)
+	ret0, _ := ret[0].(*zendesk.Iterator[zendesk.Brand])
+	return ret0
+}
+
+// GetBrandsIterator indicates an expected call of GetBrandsIterator.
+func (mr *ClientMockRecorder) GetBrandsIterator(ctx, opts any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBrandsIterator", reflect.TypeOf((*Client)(nil).GetBrandsIterator), ctx, opts)
+}
+
+// GetBrandsOBP mocks base method.
+func (m *Client) GetBrandsOBP(ctx context.Context, opts *zendesk.OBPOptions) ([]zendesk.Brand, zendesk.Page, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBrandsOBP", ctx, opts)
+	ret0, _ := ret[0].([]zendesk.Brand)
+	ret1, _ := ret[1].(zendesk.Page)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetBrandsOBP indicates an expected call of GetBrandsOBP.
+func (mr *ClientMockRecorder) GetBrandsOBP(ctx, opts any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBrandsOBP", reflect.TypeOf((*Client)(nil).GetBrandsOBP), ctx, opts)
+}
+
 // GetCountTicketsInViews mocks base method.
 func (m *Client) GetCountTicketsInViews(arg0 context.Context, arg1 []string) ([]zendesk.ViewCount, error) {
 	m.ctrl.T.Helper()

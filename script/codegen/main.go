@@ -111,6 +111,13 @@ var funcData []FuncTemplateData = []FuncTemplateData{
 		FileName:    "automation",
 	},
 	{
+		FuncName:    "Brands",
+		ObjectName:  "Brand",
+		ApiEndpoint: "/brands.json",
+		JsonName:    "brands",
+		FileName:    "brand",
+	},
+	{
 		FuncName:    "GroupMemberships",
 		ObjectName:  "GroupMembership",
 		ApiEndpoint: "/group_memberships.json",

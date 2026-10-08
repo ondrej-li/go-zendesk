@@ -27,12 +27,52 @@ type Brand struct {
 	UpdatedAt         time.Time  `json:"updated_at,omitempty"`
 }
 
+// BrandListOptions is options for GetBrands
+//
+// ref: https://developer.zendesk.com/api-reference/ticketing/account-configuration/brands/#list-brands
+type BrandListOptions struct {
+	PageOptions
+}
+
 // BrandAPI an interface containing all methods associated with zendesk brands
 type BrandAPI interface {
+	GetBrands(ctx context.Context, opts *BrandListOptions) ([]Brand, Page, error)
+	GetBrandsOBP(ctx context.Context, opts *OBPOptions) ([]Brand, Page, error)
+	GetBrandsCBP(ctx context.Context, opts *CBPOptions) ([]Brand, CursorPaginationMeta, error)
+	GetBrandsIterator(ctx context.Context, opts *PaginationOptions) *Iterator[Brand]
 	CreateBrand(ctx context.Context, brand Brand) (Brand, error)
 	GetBrand(ctx context.Context, brandID int64) (Brand, error)
 	UpdateBrand(ctx context.Context, brandID int64, brand Brand) (Brand, error)
 	DeleteBrand(ctx context.Context, brandID int64) error
+}
+
+// GetBrands fetches brand list
+// ref: https://developer.zendesk.com/api-reference/ticketing/account-configuration/brands/#list-brands
+func (z *Client) GetBrands(ctx context.Context, opts *BrandListOptions) ([]Brand, Page, error) {
+	var data struct {
+		Brands []Brand `json:"brands"`
+		Page
+	}
+
+	tmp := opts
+	if tmp == nil {
+		tmp = &BrandListOptions{}
+	}
+
+	u, err := addOptions("/brands.json", tmp)
+	if err != nil {
+		return nil, Page{}, err
+	}
+
+	body, err := z.get(ctx, u)
+	if err != nil {
+		return nil, Page{}, err
+	}
+
+	if err := json.Unmarshal(body, &data); err != nil {
+		return nil, Page{}, err
+	}
+	return data.Brands, data.Page, nil
 }
 
 // CreateBrand creates new brand
