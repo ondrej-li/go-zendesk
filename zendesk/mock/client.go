@@ -512,6 +512,21 @@ func (mr *ClientMockRecorder) DeleteOrganizationMembership(ctx, arg1 any) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteOrganizationMembership", reflect.TypeOf((*Client)(nil).DeleteOrganizationMembership), ctx, arg1)
 }
 
+// DeleteOrganizationTags mocks base method.
+func (m *Client) DeleteOrganizationTags(ctx context.Context, organizationID int64, tags []zendesk.Tag) ([]zendesk.Tag, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteOrganizationTags", ctx, organizationID, tags)
+	ret0, _ := ret[0].([]zendesk.Tag)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteOrganizationTags indicates an expected call of DeleteOrganizationTags.
+func (mr *ClientMockRecorder) DeleteOrganizationTags(ctx, organizationID, tags any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteOrganizationTags", reflect.TypeOf((*Client)(nil).DeleteOrganizationTags), ctx, organizationID, tags)
+}
+
 // DeleteSLAPolicy mocks base method.
 func (m *Client) DeleteSLAPolicy(ctx context.Context, id int64) error {
 	m.ctrl.T.Helper()
@@ -582,6 +597,21 @@ func (mr *ClientMockRecorder) DeleteTicketForm(ctx, id any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTicketForm", reflect.TypeOf((*Client)(nil).DeleteTicketForm), ctx, id)
 }
 
+// DeleteTicketTags mocks base method.
+func (m *Client) DeleteTicketTags(ctx context.Context, ticketID int64, tags []zendesk.Tag) ([]zendesk.Tag, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteTicketTags", ctx, ticketID, tags)
+	ret0, _ := ret[0].([]zendesk.Tag)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteTicketTags indicates an expected call of DeleteTicketTags.
+func (mr *ClientMockRecorder) DeleteTicketTags(ctx, ticketID, tags any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTicketTags", reflect.TypeOf((*Client)(nil).DeleteTicketTags), ctx, ticketID, tags)
+}
+
 // DeleteTrigger mocks base method.
 func (m *Client) DeleteTrigger(ctx context.Context, id int64) error {
 	m.ctrl.T.Helper()
@@ -622,6 +652,21 @@ func (m *Client) DeleteUser(ctx context.Context, userID int64) error {
 func (mr *ClientMockRecorder) DeleteUser(ctx, userID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteUser", reflect.TypeOf((*Client)(nil).DeleteUser), ctx, userID)
+}
+
+// DeleteUserTags mocks base method.
+func (m *Client) DeleteUserTags(ctx context.Context, userID int64, tags []zendesk.Tag) ([]zendesk.Tag, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteUserTags", ctx, userID, tags)
+	ret0, _ := ret[0].([]zendesk.Tag)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteUserTags indicates an expected call of DeleteUserTags.
+func (mr *ClientMockRecorder) DeleteUserTags(ctx, userID, tags any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteUserTags", reflect.TypeOf((*Client)(nil).DeleteUserTags), ctx, userID, tags)
 }
 
 // DeleteWebhook mocks base method.
@@ -2770,6 +2815,51 @@ func (m *Client) SetDefaultOrganization(arg0 context.Context, arg1 zendesk.Organ
 func (mr *ClientMockRecorder) SetDefaultOrganization(arg0, arg1 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetDefaultOrganization", reflect.TypeOf((*Client)(nil).SetDefaultOrganization), arg0, arg1)
+}
+
+// SetOrganizationTags mocks base method.
+func (m *Client) SetOrganizationTags(ctx context.Context, organizationID int64, tags []zendesk.Tag) ([]zendesk.Tag, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetOrganizationTags", ctx, organizationID, tags)
+	ret0, _ := ret[0].([]zendesk.Tag)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SetOrganizationTags indicates an expected call of SetOrganizationTags.
+func (mr *ClientMockRecorder) SetOrganizationTags(ctx, organizationID, tags any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetOrganizationTags", reflect.TypeOf((*Client)(nil).SetOrganizationTags), ctx, organizationID, tags)
+}
+
+// SetTicketTags mocks base method.
+func (m *Client) SetTicketTags(ctx context.Context, ticketID int64, tags []zendesk.Tag) ([]zendesk.Tag, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetTicketTags", ctx, ticketID, tags)
+	ret0, _ := ret[0].([]zendesk.Tag)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SetTicketTags indicates an expected call of SetTicketTags.
+func (mr *ClientMockRecorder) SetTicketTags(ctx, ticketID, tags any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetTicketTags", reflect.TypeOf((*Client)(nil).SetTicketTags), ctx, ticketID, tags)
+}
+
+// SetUserTags mocks base method.
+func (m *Client) SetUserTags(ctx context.Context, userID int64, tags []zendesk.Tag) ([]zendesk.Tag, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetUserTags", ctx, userID, tags)
+	ret0, _ := ret[0].([]zendesk.Tag)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SetUserTags indicates an expected call of SetUserTags.
+func (mr *ClientMockRecorder) SetUserTags(ctx, userID, tags any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetUserTags", reflect.TypeOf((*Client)(nil).SetUserTags), ctx, userID, tags)
 }
 
 // ShowCustomObjectRecord mocks base method.
