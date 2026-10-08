@@ -2,6 +2,7 @@ package zendesk
 
 import (
 	"net/http"
+	"net/http/httptest"
 	"testing"
 )
 
@@ -46,5 +47,17 @@ func TestSetDefaultOrganization(t *testing.T) {
 	expectedDefault := true
 	if orgMembership.Default != expectedDefault {
 		t.Fatalf("Returned org membership does not have the expected default status %v. It is %v", expectedDefault, orgMembership.Default)
+	}
+}
+
+func TestDeleteOrganizationMembership(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
+	}))
+	defer mockAPI.Close()
+
+	client := newTestClient(mockAPI)
+	if err := client.DeleteOrganizationMembership(ctx, 1234); err != nil {
+		t.Fatalf("Failed to delete organization membership: %s", err)
 	}
 }
