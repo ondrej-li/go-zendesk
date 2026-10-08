@@ -41,6 +41,7 @@ type (
 		GetOrganizationMemberships(context.Context, *OrganizationMembershipListOptions) ([]OrganizationMembership, Page, error)
 		CreateOrganizationMembership(context.Context, OrganizationMembershipOptions) (OrganizationMembership, error)
 		SetDefaultOrganization(context.Context, OrganizationMembershipOptions) (OrganizationMembership, error)
+		DeleteOrganizationMembership(context.Context, int64) error
 		GetOrganizationMembershipsIterator(ctx context.Context, opts *PaginationOptions) *Iterator[OrganizationMembership]
 		GetOrganizationMembershipsOBP(ctx context.Context, opts *OBPOptions) ([]OrganizationMembership, Page, error)
 		GetOrganizationMembershipsCBP(ctx context.Context, opts *CBPOptions) ([]OrganizationMembership, CursorPaginationMeta, error)
@@ -120,4 +121,10 @@ func (z *Client) SetDefaultOrganization(ctx context.Context, opts OrganizationMe
 	}
 
 	return result.OrganizationMembership, nil
+}
+
+// DeleteOrganizationMembership removes the organization membership with the given ID
+// https://developer.zendesk.com/api-reference/ticketing/organizations/organization_memberships/#delete-membership
+func (z *Client) DeleteOrganizationMembership(ctx context.Context, membershipID int64) error {
+	return z.delete(ctx, fmt.Sprintf("/organization_memberships/%d.json", membershipID))
 }
