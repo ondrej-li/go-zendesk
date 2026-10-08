@@ -31,6 +31,9 @@ type TicketAuditVia struct {
 // TicketAuditAPI an interface containing all of the ticket audit related zendesk methods
 type TicketAuditAPI interface {
 	GetAllTicketAudits(ctx context.Context, opts CursorOption) ([]TicketAudit, Cursor, error)
+	GetAllTicketAuditsIterator(ctx context.Context, opts *PaginationOptions) *Iterator[TicketAudit]
+	GetAllTicketAuditsOBP(ctx context.Context, opts *OBPOptions) ([]TicketAudit, Page, error)
+	GetAllTicketAuditsCBP(ctx context.Context, opts *CBPOptions) ([]TicketAudit, CursorPaginationMeta, error)
 	GetTicketAudits(ctx context.Context, ticketID int64, opts PageOptions) ([]TicketAudit, Page, error)
 	GetTicketAudit(ctx context.Context, TicketID, ID int64) (TicketAudit, error)
 	GetTicketAuditsIterator(ctx context.Context, opts *PaginationOptions) *Iterator[TicketAudit]
