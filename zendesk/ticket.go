@@ -103,6 +103,10 @@ type Ticket struct {
 	// Requester is POST only and can be used to create a ticket for a nonexistent requester
 	Requester *Requester `json:"requester,omitempty"`
 
+	// EmailCCs is write-only. Each entry adds or removes an email CC on the ticket.
+	// See EmailCC for the action values.
+	EmailCCs []EmailCC `json:"email_ccs,omitempty"`
+
 	// safe update fields
 	// https://developer.zendesk.com/documentation/ticketing/managing-tickets/creating-and-updating-tickets/#protecting-against-ticket-update-collisions
 	UpdatedStamp *time.Time `json:"updated_stamp,omitempty"`
@@ -118,6 +122,20 @@ type Requester struct {
 	Email    string `json:"email,omitempty"`
 	Locale   string `json:"locale,omitempty"`
 	LocaleID int64  `json:"locale_id,omitempty"`
+}
+
+// EmailCC is a write-only entry in a ticket's email_ccs array, used when creating
+// or updating a ticket to add or remove an email CC.
+//
+// Set Action to "put" to add the CC or "delete" to remove it. Identify the user by
+// UserID (an existing user) or UserEmail (a user to be created).
+//
+// https://developer.zendesk.com/documentation/ticketing/managing-tickets/creating-and-updating-tickets/#setting-email-ccs
+type EmailCC struct {
+	UserID    int64  `json:"user_id,omitempty"`
+	UserEmail string `json:"user_email,omitempty"`
+	UserName  string `json:"user_name,omitempty"`
+	Action    string `json:"action,omitempty"`
 }
 
 // Via is information about source of Ticket or TicketComment
