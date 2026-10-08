@@ -2515,6 +2515,34 @@ func (mr *ClientMockRecorder) Put(ctx, path, data any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Put", reflect.TypeOf((*Client)(nil).Put), ctx, path, data)
 }
 
+// RedactCommentAttachment mocks base method.
+func (m *Client) RedactCommentAttachment(ctx context.Context, ticketID, commentID, attachmentID int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RedactCommentAttachment", ctx, ticketID, commentID, attachmentID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RedactCommentAttachment indicates an expected call of RedactCommentAttachment.
+func (mr *ClientMockRecorder) RedactCommentAttachment(ctx, ticketID, commentID, attachmentID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RedactCommentAttachment", reflect.TypeOf((*Client)(nil).RedactCommentAttachment), ctx, ticketID, commentID, attachmentID)
+}
+
+// RedactTicketComment mocks base method.
+func (m *Client) RedactTicketComment(ctx context.Context, ticketCommentID int64, body zendesk.RedactTicketCommentRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RedactTicketComment", ctx, ticketCommentID, body)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// RedactTicketComment indicates an expected call of RedactTicketComment.
+func (mr *ClientMockRecorder) RedactTicketComment(ctx, ticketCommentID, body any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RedactTicketComment", reflect.TypeOf((*Client)(nil).RedactTicketComment), ctx, ticketCommentID, body)
+}
+
 // Search mocks base method.
 func (m *Client) Search(ctx context.Context, opts *zendesk.SearchOptions) (zendesk.SearchResults, zendesk.Page, error) {
 	m.ctrl.T.Helper()

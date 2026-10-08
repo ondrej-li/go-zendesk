@@ -158,6 +158,7 @@ type AttachmentAPI interface {
 	UploadAttachment(ctx context.Context, filename string, token string) UploadWriter
 	DeleteUpload(ctx context.Context, token string) error
 	GetAttachment(ctx context.Context, id int64) (Attachment, error)
+	RedactCommentAttachment(ctx context.Context, ticketID, commentID, attachmentID int64) error
 }
 
 // UploadAttachment returns a writer that can be used to create a zendesk attachment
