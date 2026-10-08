@@ -36,6 +36,7 @@ type (
 	// BaseAPI encapsulates base methods for zendesk client
 	BaseAPI interface {
 		Get(ctx context.Context, path string) ([]byte, error)
+		GetAs(ctx context.Context, path string, target any) error
 		Post(ctx context.Context, path string, data interface{}) ([]byte, error)
 		Put(ctx context.Context, path string, data interface{}) ([]byte, error)
 		Delete(ctx context.Context, path string) error
@@ -349,6 +350,18 @@ func getData(z *Client, ctx context.Context, url string, data any) error {
 // Get allows users to send requests not yet implemented
 func (z *Client) Get(ctx context.Context, path string) ([]byte, error) {
 	return z.get(ctx, path)
+}
+
+// GetAs sends a GET request to the given path and unmarshals the JSON response
+// body into target. It is a convenience wrapper over Get for endpoints that are
+// not yet covered by a dedicated method.
+func (z *Client) GetAs(ctx context.Context, path string, target any) error {
+	body, err := z.Get(ctx, path)
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal(body, target)
 }
 
 // Post allows users to send requests not yet implemented

@@ -641,6 +641,20 @@ func (mr *ClientMockRecorder) GetAllTicketAudits(ctx, opts any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllTicketAudits", reflect.TypeOf((*Client)(nil).GetAllTicketAudits), ctx, opts)
 }
 
+// GetAs mocks base method.
+func (m *Client) GetAs(ctx context.Context, path string, target any) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAs", ctx, path, target)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// GetAs indicates an expected call of GetAs.
+func (mr *ClientMockRecorder) GetAs(ctx, path, target any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAs", reflect.TypeOf((*Client)(nil).GetAs), ctx, path, target)
+}
+
 // GetAttachment mocks base method.
 func (m *Client) GetAttachment(ctx context.Context, id int64) (zendesk.Attachment, error) {
 	m.ctrl.T.Helper()
