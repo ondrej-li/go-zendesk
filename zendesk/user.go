@@ -111,6 +111,41 @@ type SearchUsersOptions struct {
 	Query       string `json:"query,omitempty" url:"query,omitempty"`
 }
 
+// Suspension is a user suspension record
+// https://developer.zendesk.com/api-reference/ticketing/users/user_suspensions/
+type Suspension struct {
+	ID                 string            `json:"id,omitempty"`
+	Reason             string            `json:"reason,omitempty"`
+	AdditionalComments string            `json:"additional_comments,omitempty"`
+	SuspendedAt        *time.Time        `json:"suspended_at,omitempty"`
+	SuspendedChannels  []string          `json:"suspended_channels,omitempty"`
+	SuspendedBy        *SuspendedByAgent `json:"suspended_by,omitempty"`
+	SuspendedUser      *SuspendedUser    `json:"suspended_user,omitempty"`
+}
+
+// SuspendedByAgent is the agent that created a suspension. It is empty when the
+// suspension was created internally by Zendesk rather than by an agent.
+type SuspendedByAgent struct {
+	ID   int64  `json:"id,omitempty"`
+	Name string `json:"name,omitempty"`
+}
+
+// SuspendedUser is a summary of the user a suspension applies to
+type SuspendedUser struct {
+	ID    int64  `json:"id,omitempty"`
+	Name  string `json:"name,omitempty"`
+	Email string `json:"email,omitempty"`
+}
+
+// UserSuspensionOptions is options for creating or updating a user suspension
+//
+// ref: https://developer.zendesk.com/api-reference/ticketing/users/user_suspensions/
+type UserSuspensionOptions struct {
+	Reason             string   `json:"reason,omitempty"`
+	AdditionalComments string   `json:"additional_comments,omitempty"`
+	SuspendedChannels  []string `json:"suspended_channels,omitempty"`
+}
+
 // UserAPI an interface containing all user related methods
 type UserAPI interface {
 	SearchUsers(ctx context.Context, opts *SearchUsersOptions) ([]User, Page, error)
@@ -121,6 +156,11 @@ type UserAPI interface {
 	CreateUser(ctx context.Context, user User) (User, error)
 	CreateOrUpdateUser(ctx context.Context, user User) (User, error)
 	UpdateUser(ctx context.Context, userID int64, user User) (User, error)
+	DeleteUser(ctx context.Context, userID int64) error
+	GetUserSuspension(ctx context.Context, userID int64) (Suspension, error)
+	SuspendUser(ctx context.Context, userID int64, opts *UserSuspensionOptions) (Suspension, error)
+	UpdateUserSuspension(ctx context.Context, userID int64, opts *UserSuspensionOptions) (Suspension, error)
+	UnsuspendUser(ctx context.Context, userID int64) error
 	GetUserRelated(ctx context.Context, userID int64) (UserRelated, error)
 	GetUsersIterator(ctx context.Context, opts *PaginationOptions) *Iterator[User]
 	GetUsersOBP(ctx context.Context, opts *OBPOptions) ([]User, Page, error)
@@ -337,6 +377,84 @@ func (z *Client) UpdateUser(ctx context.Context, userID int64, user User) (User,
 		return User{}, err
 	}
 	return result.User, nil
+}
+
+// DeleteUser deletes the specified user
+// ref: https://developer.zendesk.com/api-reference/ticketing/users/users/#delete-user
+func (z *Client) DeleteUser(ctx context.Context, userID int64) error {
+	return z.delete(ctx, fmt.Sprintf("/users/%d.json", userID))
+}
+
+// GetUserSuspension shows the suspension details for a user
+// ref: https://developer.zendesk.com/api-reference/ticketing/users/user_suspensions/#show-a-users-suspension
+func (z *Client) GetUserSuspension(ctx context.Context, userID int64) (Suspension, error) {
+	var result struct {
+		Suspension Suspension `json:"suspension"`
+	}
+
+	body, err := z.get(ctx, fmt.Sprintf("/users/%d/suspension.json", userID))
+	if err != nil {
+		return Suspension{}, err
+	}
+
+	if err := json.Unmarshal(body, &result); err != nil {
+		return Suspension{}, err
+	}
+	return result.Suspension, nil
+}
+
+// SuspendUser creates a suspension record for the given user
+// ref: https://developer.zendesk.com/api-reference/ticketing/users/user_suspensions/#create-a-user-suspension
+func (z *Client) SuspendUser(ctx context.Context, userID int64, opts *UserSuspensionOptions) (Suspension, error) {
+	var data struct {
+		Suspension UserSuspensionOptions `json:"suspension"`
+	}
+	var result struct {
+		Suspension Suspension `json:"suspension"`
+	}
+	if opts != nil {
+		data.Suspension = *opts
+	}
+
+	body, err := z.post(ctx, fmt.Sprintf("/users/%d/suspension.json", userID), data)
+	if err != nil {
+		return Suspension{}, err
+	}
+
+	if err := json.Unmarshal(body, &result); err != nil {
+		return Suspension{}, err
+	}
+	return result.Suspension, nil
+}
+
+// UpdateUserSuspension updates the suspension details for the given user
+// ref: https://developer.zendesk.com/api-reference/ticketing/users/user_suspensions/#update-a-users-suspension
+func (z *Client) UpdateUserSuspension(ctx context.Context, userID int64, opts *UserSuspensionOptions) (Suspension, error) {
+	var data struct {
+		Suspension UserSuspensionOptions `json:"suspension"`
+	}
+	var result struct {
+		Suspension Suspension `json:"suspension"`
+	}
+	if opts != nil {
+		data.Suspension = *opts
+	}
+
+	body, err := z.put(ctx, fmt.Sprintf("/users/%d/suspension.json", userID), data)
+	if err != nil {
+		return Suspension{}, err
+	}
+
+	if err := json.Unmarshal(body, &result); err != nil {
+		return Suspension{}, err
+	}
+	return result.Suspension, nil
+}
+
+// UnsuspendUser unsuspends a user by deleting their suspension record
+// ref: https://developer.zendesk.com/api-reference/ticketing/users/user_suspensions/#delete-the-user-suspension
+func (z *Client) UnsuspendUser(ctx context.Context, userID int64) error {
+	return z.delete(ctx, fmt.Sprintf("/users/%d/suspension.json", userID))
 }
 
 // GetUserRelated retrieves user related user information

@@ -1,6 +1,7 @@
 package zendesk
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
@@ -231,5 +232,106 @@ func TestGetUserRelated(t *testing.T) {
 	expectedAssignedTickets := int64(5)
 	if userRelated.AssignedTickets != expectedAssignedTickets {
 		t.Fatalf("Returned user does not have the expected assigned tickets %d. It is %d", expectedAssignedTickets, userRelated.AssignedTickets)
+	}
+}
+
+func TestDeleteUser(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodDelete {
+			t.Errorf("Expected DELETE, got %s", r.Method)
+		}
+		w.WriteHeader(http.StatusNoContent)
+	}))
+	defer mockAPI.Close()
+
+	client := newTestClient(mockAPI)
+	if err := client.DeleteUser(ctx, 1234); err != nil {
+		t.Fatalf("Failed to delete user: %s", err)
+	}
+}
+
+func TestGetUserSuspension(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(`{"suspension":{"id":"abc","reason":"other_reason","suspended_at":"2024-08-06T03:59:19Z","suspended_user":{"id":42,"name":"User AAA"}}}`))
+	}))
+	defer mockAPI.Close()
+
+	client := newTestClient(mockAPI)
+	suspension, err := client.GetUserSuspension(ctx, 42)
+	if err != nil {
+		t.Fatalf("Failed to get user suspension: %s", err)
+	}
+	if suspension.Reason != "other_reason" {
+		t.Fatalf("Unexpected suspension reason %q", suspension.Reason)
+	}
+	if suspension.SuspendedUser == nil || suspension.SuspendedUser.ID != 42 {
+		t.Fatalf("Unexpected suspended user %+v", suspension.SuspendedUser)
+	}
+}
+
+func TestSuspendUser(t *testing.T) {
+	var received struct {
+		Suspension UserSuspensionOptions `json:"suspension"`
+	}
+
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			t.Errorf("Expected POST, got %s", r.Method)
+		}
+		if err := json.NewDecoder(r.Body).Decode(&received); err != nil {
+			t.Errorf("Failed to decode request body: %s", err)
+		}
+		w.WriteHeader(http.StatusCreated)
+		w.Write([]byte(`{"suspension":{"id":"abc","reason":"other_reason"}}`))
+	}))
+	defer mockAPI.Close()
+
+	client := newTestClient(mockAPI)
+	suspension, err := client.SuspendUser(ctx, 42, &UserSuspensionOptions{
+		Reason:             "other_reason",
+		AdditionalComments: "spam",
+	})
+	if err != nil {
+		t.Fatalf("Failed to suspend user: %s", err)
+	}
+	if received.Suspension.Reason != "other_reason" || received.Suspension.AdditionalComments != "spam" {
+		t.Fatalf("Unexpected suspension payload %+v", received.Suspension)
+	}
+	if suspension.ID != "abc" {
+		t.Fatalf("Unexpected suspension id %q", suspension.ID)
+	}
+}
+
+func TestUpdateUserSuspension(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPut {
+			t.Errorf("Expected PUT, got %s", r.Method)
+		}
+		w.Write([]byte(`{"suspension":{"id":"abc","additional_comments":"updated"}}`))
+	}))
+	defer mockAPI.Close()
+
+	client := newTestClient(mockAPI)
+	suspension, err := client.UpdateUserSuspension(ctx, 42, &UserSuspensionOptions{AdditionalComments: "updated"})
+	if err != nil {
+		t.Fatalf("Failed to update user suspension: %s", err)
+	}
+	if suspension.AdditionalComments != "updated" {
+		t.Fatalf("Unexpected suspension comments %q", suspension.AdditionalComments)
+	}
+}
+
+func TestUnsuspendUser(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodDelete {
+			t.Errorf("Expected DELETE, got %s", r.Method)
+		}
+		w.WriteHeader(http.StatusNoContent)
+	}))
+	defer mockAPI.Close()
+
+	client := newTestClient(mockAPI)
+	if err := client.UnsuspendUser(ctx, 42); err != nil {
+		t.Fatalf("Failed to unsuspend user: %s", err)
 	}
 }
