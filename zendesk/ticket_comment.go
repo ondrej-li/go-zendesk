@@ -12,6 +12,7 @@ type TicketCommentAPI interface {
 	CreateTicketComment(ctx context.Context, ticketID int64, ticketComment TicketComment) (TicketComment, error)
 	ListTicketComments(ctx context.Context, ticketID int64, opts *ListTicketCommentsOptions) (*ListTicketCommentsResult, error)
 	MakeCommentPrivate(ctx context.Context, ticketID int64, ticketCommentID int64) error
+	RedactTicketComment(ctx context.Context, ticketCommentID int64, body RedactTicketCommentRequest) error
 	GetTicketCommentsIterator(ctx context.Context, opts *PaginationOptions) *Iterator[TicketComment]
 	GetTicketCommentsOBP(ctx context.Context, opts *OBPOptions) ([]TicketComment, Page, error)
 	GetTicketCommentsCBP(ctx context.Context, opts *CBPOptions) ([]TicketComment, CursorPaginationMeta, error)
