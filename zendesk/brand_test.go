@@ -89,3 +89,38 @@ func TestDeleteBrand(t *testing.T) {
 		t.Fatalf("Failed to delete brand: %s", err)
 	}
 }
+
+func TestGetBrands(t *testing.T) {
+	mockAPI := newMockAPI(http.MethodGet, "brands.json")
+	client := newTestClient(mockAPI)
+	defer mockAPI.Close()
+
+	brands, _, err := client.GetBrands(ctx, &BrandListOptions{})
+	if err != nil {
+		t.Fatalf("Failed to get brands: %s", err)
+	}
+
+	expected := 2
+	if len(brands) != expected {
+		t.Fatalf("Expected %d brands, got %d", expected, len(brands))
+	}
+}
+
+func TestGetBrandsIterator(t *testing.T) {
+	mockAPI := newMockAPI(http.MethodGet, "brands.json")
+	client := newTestClient(mockAPI)
+	defer mockAPI.Close()
+
+	it := client.GetBrandsIterator(ctx, NewPaginationOptions())
+	if !it.HasMore() {
+		t.Fatal("Expected the brand iterator to have more results")
+	}
+
+	brands, err := it.GetNext()
+	if err != nil {
+		t.Fatalf("Failed to get the next page of brands: %s", err)
+	}
+	if len(brands) == 0 {
+		t.Fatal("Expected brands from the iterator, got none")
+	}
+}
