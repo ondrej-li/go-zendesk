@@ -287,6 +287,47 @@ func (z *Client) delete(ctx context.Context, path string) error {
 	return nil
 }
 
+// deleteWithBody sends a DELETE request with an optional JSON body and returns
+// the response body. Unlike delete, it accepts a 200 OK response, which the tag
+// removal endpoints use to return the remaining tags.
+func (z *Client) deleteWithBody(ctx context.Context, path string, data interface{}) ([]byte, error) {
+	var payload string
+	if data != nil {
+		encoded, err := json.Marshal(data)
+		if err != nil {
+			return nil, err
+		}
+		payload = string(encoded)
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, z.baseURL.String()+path, strings.NewReader(payload))
+	if err != nil {
+		return nil, err
+	}
+
+	req = z.prepareRequest(ctx, req)
+
+	resp, err := z.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, Error{
+			body: body,
+			resp: resp,
+		}
+	}
+
+	return body, nil
+}
+
 // prepare request sets common request variables such as authn and user agent
 func (z *Client) prepareRequest(ctx context.Context, req *http.Request) *http.Request {
 	out := req.WithContext(ctx)
