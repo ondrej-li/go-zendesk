@@ -610,6 +610,20 @@ func (mr *ClientMockRecorder) DeleteUpload(ctx, token any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteUpload", reflect.TypeOf((*Client)(nil).DeleteUpload), ctx, token)
 }
 
+// DeleteUser mocks base method.
+func (m *Client) DeleteUser(ctx context.Context, userID int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteUser", ctx, userID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteUser indicates an expected call of DeleteUser.
+func (mr *ClientMockRecorder) DeleteUser(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteUser", reflect.TypeOf((*Client)(nil).DeleteUser), ctx, userID)
+}
+
 // DeleteWebhook mocks base method.
 func (m *Client) DeleteWebhook(ctx context.Context, webhookID string) error {
 	m.ctrl.T.Helper()
@@ -2363,6 +2377,21 @@ func (mr *ClientMockRecorder) GetUserRelated(ctx, userID any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserRelated", reflect.TypeOf((*Client)(nil).GetUserRelated), ctx, userID)
 }
 
+// GetUserSuspension mocks base method.
+func (m *Client) GetUserSuspension(ctx context.Context, userID int64) (zendesk.Suspension, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserSuspension", ctx, userID)
+	ret0, _ := ret[0].(zendesk.Suspension)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserSuspension indicates an expected call of GetUserSuspension.
+func (mr *ClientMockRecorder) GetUserSuspension(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserSuspension", reflect.TypeOf((*Client)(nil).GetUserSuspension), ctx, userID)
+}
+
 // GetUserTags mocks base method.
 func (m *Client) GetUserTags(ctx context.Context, userID int64) ([]zendesk.Tag, error) {
 	m.ctrl.T.Helper()
@@ -2758,6 +2787,35 @@ func (mr *ClientMockRecorder) ShowCustomObjectRecord(ctx, customObjectKey, custo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ShowCustomObjectRecord", reflect.TypeOf((*Client)(nil).ShowCustomObjectRecord), ctx, customObjectKey, customObjectRecordID)
 }
 
+// SuspendUser mocks base method.
+func (m *Client) SuspendUser(ctx context.Context, userID int64, opts *zendesk.UserSuspensionOptions) (zendesk.Suspension, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SuspendUser", ctx, userID, opts)
+	ret0, _ := ret[0].(zendesk.Suspension)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SuspendUser indicates an expected call of SuspendUser.
+func (mr *ClientMockRecorder) SuspendUser(ctx, userID, opts any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SuspendUser", reflect.TypeOf((*Client)(nil).SuspendUser), ctx, userID, opts)
+}
+
+// UnsuspendUser mocks base method.
+func (m *Client) UnsuspendUser(ctx context.Context, userID int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UnsuspendUser", ctx, userID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UnsuspendUser indicates an expected call of UnsuspendUser.
+func (mr *ClientMockRecorder) UnsuspendUser(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UnsuspendUser", reflect.TypeOf((*Client)(nil).UnsuspendUser), ctx, userID)
+}
+
 // UpdateAutomation mocks base method.
 func (m *Client) UpdateAutomation(ctx context.Context, id int64, automation zendesk.Automation) (zendesk.Automation, error) {
 	m.ctrl.T.Helper()
@@ -2966,6 +3024,21 @@ func (m *Client) UpdateUser(ctx context.Context, userID int64, user zendesk.User
 func (mr *ClientMockRecorder) UpdateUser(ctx, userID, user any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUser", reflect.TypeOf((*Client)(nil).UpdateUser), ctx, userID, user)
+}
+
+// UpdateUserSuspension mocks base method.
+func (m *Client) UpdateUserSuspension(ctx context.Context, userID int64, opts *zendesk.UserSuspensionOptions) (zendesk.Suspension, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateUserSuspension", ctx, userID, opts)
+	ret0, _ := ret[0].(zendesk.Suspension)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateUserSuspension indicates an expected call of UpdateUserSuspension.
+func (mr *ClientMockRecorder) UpdateUserSuspension(ctx, userID, opts any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserSuspension", reflect.TypeOf((*Client)(nil).UpdateUserSuspension), ctx, userID, opts)
 }
 
 // UpdateWebhook mocks base method.
