@@ -365,6 +365,50 @@ func TestCreateTicket(t *testing.T) {
 	}
 }
 
+func TestCreateTicketEmailCCs(t *testing.T) {
+	var received struct {
+		Ticket struct {
+			EmailCCs []EmailCC `json:"email_ccs"`
+		} `json:"ticket"`
+	}
+
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if err := json.NewDecoder(r.Body).Decode(&received); err != nil {
+			t.Errorf("failed to decode request body: %s", err)
+		}
+		w.Write([]byte(`{"ticket":{"id":1}}`))
+	}))
+	client := newTestClient(mockAPI)
+	defer mockAPI.Close()
+
+	_, err := client.CreateTicket(ctx, Ticket{
+		Subject: "email ccs",
+		Comment: &TicketComment{Body: "hi"},
+		EmailCCs: []EmailCC{
+			{UserID: 123, Action: "put"},
+			{UserEmail: "cc@example.com", Action: "put"},
+			{UserID: 456, Action: "delete"},
+		},
+	})
+	if err != nil {
+		t.Fatalf("Failed to create ticket: %s", err)
+	}
+
+	ccs := received.Ticket.EmailCCs
+	if len(ccs) != 3 {
+		t.Fatalf("Expected 3 email_ccs in the request, got %d", len(ccs))
+	}
+	if ccs[0].UserID != 123 || ccs[0].Action != "put" {
+		t.Fatalf("Unexpected first email_cc: %+v", ccs[0])
+	}
+	if ccs[1].UserEmail != "cc@example.com" {
+		t.Fatalf("Unexpected second email_cc: %+v", ccs[1])
+	}
+	if ccs[2].Action != "delete" {
+		t.Fatalf("Expected a delete action, got %q", ccs[2].Action)
+	}
+}
+
 func TestUpdateTicket(t *testing.T) {
 	mockAPI := newMockAPIWithStatus(http.MethodPut, "ticket.json", http.StatusOK)
 	client := newTestClient(mockAPI)
