@@ -655,6 +655,52 @@ func (mr *ClientMockRecorder) GetAllTicketAudits(ctx, opts any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllTicketAudits", reflect.TypeOf((*Client)(nil).GetAllTicketAudits), ctx, opts)
 }
 
+// GetAllTicketAuditsCBP mocks base method.
+func (m *Client) GetAllTicketAuditsCBP(ctx context.Context, opts *zendesk.CBPOptions) ([]zendesk.TicketAudit, zendesk.CursorPaginationMeta, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllTicketAuditsCBP", ctx, opts)
+	ret0, _ := ret[0].([]zendesk.TicketAudit)
+	ret1, _ := ret[1].(zendesk.CursorPaginationMeta)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetAllTicketAuditsCBP indicates an expected call of GetAllTicketAuditsCBP.
+func (mr *ClientMockRecorder) GetAllTicketAuditsCBP(ctx, opts any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllTicketAuditsCBP", reflect.TypeOf((*Client)(nil).GetAllTicketAuditsCBP), ctx, opts)
+}
+
+// GetAllTicketAuditsIterator mocks base method.
+func (m *Client) GetAllTicketAuditsIterator(ctx context.Context, opts *zendesk.PaginationOptions) *zendesk.Iterator[zendesk.TicketAudit] {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllTicketAuditsIterator", ctx, opts)
+	ret0, _ := ret[0].(*zendesk.Iterator[zendesk.TicketAudit])
+	return ret0
+}
+
+// GetAllTicketAuditsIterator indicates an expected call of GetAllTicketAuditsIterator.
+func (mr *ClientMockRecorder) GetAllTicketAuditsIterator(ctx, opts any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllTicketAuditsIterator", reflect.TypeOf((*Client)(nil).GetAllTicketAuditsIterator), ctx, opts)
+}
+
+// GetAllTicketAuditsOBP mocks base method.
+func (m *Client) GetAllTicketAuditsOBP(ctx context.Context, opts *zendesk.OBPOptions) ([]zendesk.TicketAudit, zendesk.Page, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAllTicketAuditsOBP", ctx, opts)
+	ret0, _ := ret[0].([]zendesk.TicketAudit)
+	ret1, _ := ret[1].(zendesk.Page)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetAllTicketAuditsOBP indicates an expected call of GetAllTicketAuditsOBP.
+func (mr *ClientMockRecorder) GetAllTicketAuditsOBP(ctx, opts any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllTicketAuditsOBP", reflect.TypeOf((*Client)(nil).GetAllTicketAuditsOBP), ctx, opts)
+}
+
 // GetAs mocks base method.
 func (m *Client) GetAs(ctx context.Context, path string, target any) error {
 	m.ctrl.T.Helper()
