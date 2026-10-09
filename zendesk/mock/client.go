@@ -2381,6 +2381,52 @@ func (mr *ClientMockRecorder) GetTicketFormsShowMany(ctx, ids any) *gomock.Call 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTicketFormsShowMany", reflect.TypeOf((*Client)(nil).GetTicketFormsShowMany), ctx, ids)
 }
 
+// GetTicketMetric mocks base method.
+func (m *Client) GetTicketMetric(ctx context.Context, ticketMetricsID int64) (zendesk.TicketMetric, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTicketMetric", ctx, ticketMetricsID)
+	ret0, _ := ret[0].(zendesk.TicketMetric)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTicketMetric indicates an expected call of GetTicketMetric.
+func (mr *ClientMockRecorder) GetTicketMetric(ctx, ticketMetricsID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTicketMetric", reflect.TypeOf((*Client)(nil).GetTicketMetric), ctx, ticketMetricsID)
+}
+
+// GetTicketMetricByTicket mocks base method.
+func (m *Client) GetTicketMetricByTicket(ctx context.Context, ticketID int64) (zendesk.TicketMetric, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTicketMetricByTicket", ctx, ticketID)
+	ret0, _ := ret[0].(zendesk.TicketMetric)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTicketMetricByTicket indicates an expected call of GetTicketMetricByTicket.
+func (mr *ClientMockRecorder) GetTicketMetricByTicket(ctx, ticketID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTicketMetricByTicket", reflect.TypeOf((*Client)(nil).GetTicketMetricByTicket), ctx, ticketID)
+}
+
+// GetTicketMetrics mocks base method.
+func (m *Client) GetTicketMetrics(ctx context.Context, opts *zendesk.TicketMetricListOptions) ([]zendesk.TicketMetric, zendesk.Page, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTicketMetrics", ctx, opts)
+	ret0, _ := ret[0].([]zendesk.TicketMetric)
+	ret1, _ := ret[1].(zendesk.Page)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetTicketMetrics indicates an expected call of GetTicketMetrics.
+func (mr *ClientMockRecorder) GetTicketMetrics(ctx, opts any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTicketMetrics", reflect.TypeOf((*Client)(nil).GetTicketMetrics), ctx, opts)
+}
+
 // GetTicketSkips mocks base method.
 func (m *Client) GetTicketSkips(ctx context.Context, opts *zendesk.TicketSkipListOptions) ([]zendesk.TicketSkip, zendesk.Page, error) {
 	m.ctrl.T.Helper()

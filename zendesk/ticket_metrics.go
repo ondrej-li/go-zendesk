@@ -52,7 +52,7 @@ type TicketMetricListOptions struct {
 // TicketMetricsAPI is an interface containing all methods for the ticket
 // metrics API
 type TicketMetricsAPI interface {
-	GetTicketMetrics(ctx context.Context, opts ...TicketMetricListOptions) ([]TicketMetric, Page, error)
+	GetTicketMetrics(ctx context.Context, opts *TicketMetricListOptions) ([]TicketMetric, Page, error)
 	GetTicketMetric(ctx context.Context, ticketMetricsID int64) (TicketMetric, error)
 	GetTicketMetricByTicket(ctx context.Context, ticketID int64) (TicketMetric, error)
 }
