@@ -2032,6 +2032,21 @@ func (mr *ClientMockRecorder) GetTicketAuditsCBP(ctx, opts any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTicketAuditsCBP", reflect.TypeOf((*Client)(nil).GetTicketAuditsCBP), ctx, opts)
 }
 
+// GetTicketAuditsCount mocks base method.
+func (m *Client) GetTicketAuditsCount(ctx context.Context, ticketID int64) (zendesk.Count, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTicketAuditsCount", ctx, ticketID)
+	ret0, _ := ret[0].(zendesk.Count)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTicketAuditsCount indicates an expected call of GetTicketAuditsCount.
+func (mr *ClientMockRecorder) GetTicketAuditsCount(ctx, ticketID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTicketAuditsCount", reflect.TypeOf((*Client)(nil).GetTicketAuditsCount), ctx, ticketID)
+}
+
 // GetTicketAuditsIterator mocks base method.
 func (m *Client) GetTicketAuditsIterator(ctx context.Context, opts *zendesk.PaginationOptions) *zendesk.Iterator[zendesk.TicketAudit] {
 	m.ctrl.T.Helper()
@@ -2307,6 +2322,21 @@ func (m *Client) GetTicketsCBP(ctx context.Context, opts *zendesk.CBPOptions) ([
 func (mr *ClientMockRecorder) GetTicketsCBP(ctx, opts any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTicketsCBP", reflect.TypeOf((*Client)(nil).GetTicketsCBP), ctx, opts)
+}
+
+// GetTicketsCount mocks base method.
+func (m *Client) GetTicketsCount(ctx context.Context) (zendesk.Count, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTicketsCount", ctx)
+	ret0, _ := ret[0].(zendesk.Count)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTicketsCount indicates an expected call of GetTicketsCount.
+func (mr *ClientMockRecorder) GetTicketsCount(ctx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTicketsCount", reflect.TypeOf((*Client)(nil).GetTicketsCount), ctx)
 }
 
 // GetTicketsFromView mocks base method.
@@ -2842,6 +2872,20 @@ func (m *Client) MakeCommentPrivate(ctx context.Context, ticketID, ticketComment
 func (mr *ClientMockRecorder) MakeCommentPrivate(ctx, ticketID, ticketCommentID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MakeCommentPrivate", reflect.TypeOf((*Client)(nil).MakeCommentPrivate), ctx, ticketID, ticketCommentID)
+}
+
+// MakeTicketAuditPrivate mocks base method.
+func (m *Client) MakeTicketAuditPrivate(ctx context.Context, ticketID, ticketAuditID int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MakeTicketAuditPrivate", ctx, ticketID, ticketAuditID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// MakeTicketAuditPrivate indicates an expected call of MakeTicketAuditPrivate.
+func (mr *ClientMockRecorder) MakeTicketAuditPrivate(ctx, ticketID, ticketAuditID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MakeTicketAuditPrivate", reflect.TypeOf((*Client)(nil).MakeTicketAuditPrivate), ctx, ticketID, ticketAuditID)
 }
 
 // Post mocks base method.
