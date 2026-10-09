@@ -80,3 +80,38 @@ func TestDeleteWebhook(t *testing.T) {
 		t.Fatalf("Failed to delete webhook: %s", err)
 	}
 }
+
+func TestGetWebhookSigningSecret(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			t.Errorf("Expected GET, got %s", r.Method)
+		}
+		if want := "/webhooks/01EJFTSCC78X5V07NPY2MHR00M/signing_secret"; r.URL.Path != want {
+			t.Errorf("Expected path %q, got %q", want, r.URL.Path)
+		}
+		w.Write([]byte(`{"signing_secret":{"algorithm":"sha256","secret":"secret-value"}}`))
+	}))
+	defer mockAPI.Close()
+
+	secret, err := newTestClient(mockAPI).GetWebhookSigningSecret(ctx, "01EJFTSCC78X5V07NPY2MHR00M")
+	if err != nil {
+		t.Fatalf("Failed to get webhook signing secret: %s", err)
+	}
+	if secret == nil {
+		t.Fatal("Expected signing secret, got nil")
+	}
+	if secret.Algorithm != "sha256" || secret.Secret != "secret-value" {
+		t.Fatalf("Unexpected signing secret: %+v", secret)
+	}
+}
+
+func TestGetWebhookSigningSecretFailure(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+	}))
+	defer mockAPI.Close()
+
+	if _, err := newTestClient(mockAPI).GetWebhookSigningSecret(ctx, "unknown"); err == nil {
+		t.Fatal("Expected error, got nil")
+	}
+}

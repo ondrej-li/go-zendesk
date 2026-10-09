@@ -64,3 +64,16 @@ func TestCanBeRemarshalled(t *testing.T) {
 		t.Fatalf("remarshalling is inconsistent")
 	}
 }
+
+func TestCollaboratorsString(t *testing.T) {
+	c := &Collaborators{}
+	for _, collaborator := range []interface{}{int64(562), "someone@example.com"} {
+		if err := c.Append(collaborator); err != nil {
+			t.Fatalf("Append returned an error %v", err)
+		}
+	}
+
+	if want := "[562 someone@example.com]"; c.String() != want {
+		t.Fatalf("expected %s, but got %s", want, c.String())
+	}
+}

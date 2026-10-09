@@ -76,3 +76,42 @@ func TestDeleteOrganization(t *testing.T) {
 		t.Fatalf("Failed to delete organization: %s", err)
 	}
 }
+
+func TestGetOrganizationByExternalID(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			t.Errorf("Expected GET, got %s", r.Method)
+		}
+		if want := "/organizations/search"; r.URL.Path != want {
+			t.Errorf("Expected path %q, got %q", want, r.URL.Path)
+		}
+		if got := r.URL.Query().Get("external_id"); got != "external-1" {
+			t.Errorf("Expected external_id=external-1, got %q", got)
+		}
+		w.Write([]byte(`{"organizations":[{"id":1234,"external_id":"external-1"}],"count":1}`))
+	}))
+	defer mockAPI.Close()
+
+	orgs, page, err := newTestClient(mockAPI).GetOrganizationByExternalID(ctx, "external-1")
+	if err != nil {
+		t.Fatalf("Failed to get organization by external ID: %s", err)
+	}
+
+	if len(orgs) != 1 || orgs[0].ID != 1234 {
+		t.Fatalf("Unexpected organizations: %+v", orgs)
+	}
+	if page.Count != 1 {
+		t.Fatalf("expected page count 1, but got %d", page.Count)
+	}
+}
+
+func TestGetOrganizationByExternalIDFailure(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusInternalServerError)
+	}))
+	defer mockAPI.Close()
+
+	if _, _, err := newTestClient(mockAPI).GetOrganizationByExternalID(ctx, "external-1"); err == nil {
+		t.Fatal("Expected error, got nil")
+	}
+}

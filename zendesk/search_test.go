@@ -136,3 +136,25 @@ func TestSearchQueryParam(t *testing.T) {
 		t.Fatalf("Received error from search api")
 	}
 }
+
+func TestSearchResultsMarshalJSON(t *testing.T) {
+	results := &SearchResults{results: []interface{}{
+		map[string]interface{}{"id": json.Number("1")},
+	}}
+
+	body, err := json.Marshal(results)
+	if err != nil {
+		t.Fatalf("Failed to marshal search results: %s", err)
+	}
+	if want := `[{"id":1}]`; string(body) != want {
+		t.Fatalf("expected %s, but got %s", want, body)
+	}
+}
+
+func TestSearchResultsString(t *testing.T) {
+	results := &SearchResults{results: []interface{}{"ticket", json.Number("2")}}
+
+	if want := "[ticket 2]"; results.String() != want {
+		t.Fatalf("expected %s, but got %s", want, results.String())
+	}
+}
