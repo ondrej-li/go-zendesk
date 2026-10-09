@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -56,6 +58,8 @@ type TicketFieldAPI interface {
 	GetTicketFieldsIterator(ctx context.Context, opts *PaginationOptions) *Iterator[TicketField]
 	GetTicketFieldsOBP(ctx context.Context, opts *OBPOptions) ([]TicketField, Page, error)
 	GetTicketFieldsCBP(ctx context.Context, opts *CBPOptions) ([]TicketField, CursorPaginationMeta, error)
+	GetTicketFieldsShowMany(ctx context.Context, ids []int64) ([]TicketField, error)
+	ReorderTicketFields(ctx context.Context, ticketFieldIDs []int64) error
 }
 
 // GetTicketFields fetches ticket field list
@@ -152,4 +156,54 @@ func (z *Client) DeleteTicketField(ctx context.Context, ticketID int64) error {
 	}
 
 	return nil
+}
+
+// GetTicketFieldsShowMany returns multiple ticket fields in a single request
+// ref: https://developer.zendesk.com/api-reference/ticketing/tickets/ticket_fields/#show-many-ticket-fields
+func (z *Client) GetTicketFieldsShowMany(ctx context.Context, ids []int64) ([]TicketField, error) {
+	var result struct {
+		TicketFields []TicketField `json:"ticket_fields"`
+	}
+
+	var req struct {
+		IDs string `url:"ids,omitempty"`
+	}
+	req.IDs = encodeInt64IDs(ids)
+
+	u, err := addOptions("/ticket_fields/show_many.json", req)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := z.get(ctx, u)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := json.Unmarshal(body, &result); err != nil {
+		return nil, err
+	}
+	return result.TicketFields, nil
+}
+
+// ReorderTicketFields assigns the given field ids to the first positions, in order.
+// Fields not listed are assigned incremental positions automatically.
+// ref: https://developer.zendesk.com/api-reference/ticketing/tickets/ticket_fields/#reorder-ticket-fields
+func (z *Client) ReorderTicketFields(ctx context.Context, ticketFieldIDs []int64) error {
+	var data struct {
+		TicketFieldIDs []int64 `json:"ticket_field_ids"`
+	}
+	data.TicketFieldIDs = ticketFieldIDs
+
+	_, err := z.put(ctx, "/ticket_fields/reorder.json", data)
+	return err
+}
+
+// encodeInt64IDs encodes ids as a comma-separated query parameter value
+func encodeInt64IDs(ids []int64) string {
+	values := make([]string, len(ids))
+	for i, id := range ids {
+		values[i] = strconv.FormatInt(id, 10)
+	}
+	return strings.Join(values, ",")
 }

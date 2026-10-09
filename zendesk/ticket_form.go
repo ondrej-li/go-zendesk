@@ -44,6 +44,8 @@ type TicketFormAPI interface {
 	GetTicketFormsIterator(ctx context.Context, opts *PaginationOptions) *Iterator[TicketForm]
 	GetTicketFormsOBP(ctx context.Context, opts *OBPOptions) ([]TicketForm, Page, error)
 	GetTicketFormsCBP(ctx context.Context, opts *CBPOptions) ([]TicketForm, CursorPaginationMeta, error)
+	GetTicketFormsShowMany(ctx context.Context, ids []int64) ([]TicketForm, error)
+	ReorderTicketForms(ctx context.Context, ticketFormIDs []int64) ([]TicketForm, error)
 }
 
 // GetTicketForms fetches ticket forms
@@ -145,4 +147,54 @@ func (z *Client) DeleteTicketForm(ctx context.Context, id int64) error {
 	}
 
 	return nil
+}
+
+// GetTicketFormsShowMany returns multiple ticket forms in a single request
+// ref: https://developer.zendesk.com/api-reference/ticketing/tickets/ticket_forms/#show-many-ticket-forms
+func (z *Client) GetTicketFormsShowMany(ctx context.Context, ids []int64) ([]TicketForm, error) {
+	var result struct {
+		TicketForms []TicketForm `json:"ticket_forms"`
+	}
+
+	var req struct {
+		IDs string `url:"ids,omitempty"`
+	}
+	req.IDs = encodeInt64IDs(ids)
+
+	u, err := addOptions("/ticket_forms/show_many.json", req)
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := z.get(ctx, u)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := json.Unmarshal(body, &result); err != nil {
+		return nil, err
+	}
+	return result.TicketForms, nil
+}
+
+// ReorderTicketForms assigns the given form ids to the first positions, in order
+// ref: https://developer.zendesk.com/api-reference/ticketing/tickets/ticket_forms/#reorder-ticket-forms
+func (z *Client) ReorderTicketForms(ctx context.Context, ticketFormIDs []int64) ([]TicketForm, error) {
+	var data struct {
+		TicketFormIDs []int64 `json:"ticket_form_ids"`
+	}
+	var result struct {
+		TicketForms []TicketForm `json:"ticket_forms"`
+	}
+	data.TicketFormIDs = ticketFormIDs
+
+	body, err := z.put(ctx, "/ticket_forms/reorder.json", data)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := json.Unmarshal(body, &result); err != nil {
+		return nil, err
+	}
+	return result.TicketForms, nil
 }
