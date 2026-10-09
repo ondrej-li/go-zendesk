@@ -1,6 +1,7 @@
 package zendesk
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -106,5 +107,49 @@ func TestDeleteUserField(t *testing.T) {
 	client := newTestClient(mockAPI)
 	if err := client.DeleteUserField(ctx, 7); err != nil {
 		t.Fatalf("Failed to delete user field: %s", err)
+	}
+}
+
+func TestCreateUserField(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			t.Errorf("Expected POST, got %s", r.Method)
+		}
+		if want := "/user_fields.json"; r.URL.Path != want {
+			t.Errorf("Expected path %q, got %q", want, r.URL.Path)
+		}
+
+		var body struct {
+			UserField UserField `json:"user_field"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+			t.Errorf("Failed to decode request body: %s", err)
+		}
+		if body.UserField.Title != "Role" {
+			t.Errorf(`Expected user field to be wrapped in "user_field", got %+v`, body)
+		}
+
+		w.WriteHeader(http.StatusCreated)
+		w.Write([]byte(`{"user_field":{"id":7,"title":"Role"}}`))
+	}))
+	defer mockAPI.Close()
+
+	field, err := newTestClient(mockAPI).CreateUserField(ctx, UserField{Title: "Role"})
+	if err != nil {
+		t.Fatalf("Failed to create user field: %s", err)
+	}
+	if field.ID != 7 || field.Title != "Role" {
+		t.Fatalf("Unexpected user field: %+v", field)
+	}
+}
+
+func TestCreateUserFieldFailure(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+	}))
+	defer mockAPI.Close()
+
+	if _, err := newTestClient(mockAPI).CreateUserField(ctx, UserField{}); err == nil {
+		t.Fatal("Expected error, got nil")
 	}
 }

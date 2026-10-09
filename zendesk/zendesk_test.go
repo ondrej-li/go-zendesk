@@ -384,3 +384,179 @@ func TestAddOptions(t *testing.T) {
 		t.Fatalf("\nExpect:\t%s\nGot:\t%s", expected, u)
 	}
 }
+
+func TestPatch(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPatch {
+			t.Errorf("Expected PATCH, got %s", r.Method)
+		}
+		w.Write([]byte(`{"ok":true}`))
+	}))
+	defer mockAPI.Close()
+
+	c := newTestClient(mockAPI)
+	body, err := c.patch(ctx, "/foo/1", map[string]string{"a": "b"})
+	if err != nil {
+		t.Fatalf("Failed to send request: %s", err)
+	}
+	if len(body) == 0 {
+		t.Fatal("Response body is empty")
+	}
+}
+
+func TestPatchFailure(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusInternalServerError)
+	}))
+	defer mockAPI.Close()
+
+	c := newTestClient(mockAPI)
+	_, err := c.patch(ctx, "/foo/1", nil)
+	if err == nil {
+		t.Fatal("Did not receive error from client")
+	}
+	if _, ok := err.(Error); !ok {
+		t.Fatalf("Did not return a zendesk error %s", err)
+	}
+}
+
+// The exported Post/Put/Delete are the escape hatch for endpoints the SDK does
+// not wrap yet, so their behaviour is worth pinning down.
+func TestExportedPost(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			t.Errorf("Expected POST, got %s", r.Method)
+		}
+		w.WriteHeader(http.StatusCreated)
+		w.Write([]byte(`{"ok":true}`))
+	}))
+	defer mockAPI.Close()
+
+	c := newTestClient(mockAPI)
+	if _, err := c.Post(ctx, "/foo.json", map[string]string{"a": "b"}); err != nil {
+		t.Fatalf("Failed to send request: %s", err)
+	}
+}
+
+func TestExportedPut(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPut {
+			t.Errorf("Expected PUT, got %s", r.Method)
+		}
+		w.Write([]byte(`{"ok":true}`))
+	}))
+	defer mockAPI.Close()
+
+	c := newTestClient(mockAPI)
+	if _, err := c.Put(ctx, "/foo.json", map[string]string{"a": "b"}); err != nil {
+		t.Fatalf("Failed to send request: %s", err)
+	}
+}
+
+func TestExportedDelete(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodDelete {
+			t.Errorf("Expected DELETE, got %s", r.Method)
+		}
+		w.WriteHeader(http.StatusNoContent)
+	}))
+	defer mockAPI.Close()
+
+	c := newTestClient(mockAPI)
+	if err := c.Delete(ctx, "/foo.json"); err != nil {
+		t.Fatalf("Failed to send request: %s", err)
+	}
+}
+
+func TestExportedRequestsPropagateFailure(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(`{"error":"Boom"}`))
+	}))
+	defer mockAPI.Close()
+
+	c := newTestClient(mockAPI)
+
+	if _, err := c.Post(ctx, "/foo.json", nil); err == nil {
+		t.Error("Post did not return an error")
+	}
+	if _, err := c.Put(ctx, "/foo.json", nil); err == nil {
+		t.Error("Put did not return an error")
+	}
+	if err := c.Delete(ctx, "/foo.json"); err == nil {
+		t.Error("Delete did not return an error")
+	}
+}
+
+// A path that cannot form a valid request must return an error rather than panic.
+func TestRequestsRejectInvalidURL(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
+	defer mockAPI.Close()
+
+	client := newTestClient(mockAPI)
+
+	bad := "/bad\x00path"
+
+	if _, err := client.Get(ctx, bad); err == nil {
+		t.Error("Get did not return an error")
+	}
+	if _, err := client.Post(ctx, bad, nil); err == nil {
+		t.Error("Post did not return an error")
+	}
+	if _, err := client.Put(ctx, bad, nil); err == nil {
+		t.Error("Put did not return an error")
+	}
+	if err := client.Delete(ctx, bad); err == nil {
+		t.Error("Delete did not return an error")
+	}
+}
+
+func TestDeleteWithBodyFailure(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusInternalServerError)
+	}))
+	defer mockAPI.Close()
+
+	c := newTestClient(mockAPI)
+	if _, err := c.deleteWithBody(ctx, "/foo.json", map[string]string{"a": "b"}); err == nil {
+		t.Fatal("Did not receive error from client")
+	}
+}
+
+func TestGetDataPropagatesFailure(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusInternalServerError)
+	}))
+	defer mockAPI.Close()
+
+	c := newTestClient(mockAPI)
+
+	var data struct {
+		Groups []Group `json:"groups"`
+	}
+	if err := getData(c, ctx, "/groups.json", &data); err == nil {
+		t.Fatal("Did not receive error from getData")
+	}
+}
+
+func TestGetDataPropagatesUnmarshalFailure(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(`not json`))
+	}))
+	defer mockAPI.Close()
+
+	c := newTestClient(mockAPI)
+
+	var data struct {
+		Groups []Group `json:"groups"`
+	}
+	if err := getData(c, ctx, "/groups.json", &data); err == nil {
+		t.Fatal("Did not receive error from getData")
+	}
+}
+
+func TestAddOptionsInvalidURL(t *testing.T) {
+	if _, err := addOptions("/foo\x00bar", &PageOptions{}); err == nil {
+		t.Fatal("Expected an error for an unparsable URL")
+	}
+}

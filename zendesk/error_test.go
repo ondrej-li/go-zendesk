@@ -73,3 +73,28 @@ func TestError_Status(t *testing.T) {
 		t.Fatal("Status returned from error was not the correct status code")
 	}
 }
+
+func TestNewError(t *testing.T) {
+	resp := &http.Response{StatusCode: http.StatusNotFound}
+	body := []byte(`{"error":"RecordNotFound"}`)
+
+	err := NewError(body, resp)
+
+	if err.Status() != http.StatusNotFound {
+		t.Fatalf("Unexpected status %d", err.Status())
+	}
+
+	expected := fmt.Sprintf("%d: %s", http.StatusNotFound, body)
+	if v := err.Error(); v != expected {
+		t.Fatalf("Error %s did not have expected value %s", v, expected)
+	}
+}
+
+func TestOptionsError(t *testing.T) {
+	err := &OptionsError{opts: "search options"}
+
+	expected := "invalid options: search options"
+	if v := err.Error(); v != expected {
+		t.Fatalf("Error %s did not have expected value %s", v, expected)
+	}
+}
