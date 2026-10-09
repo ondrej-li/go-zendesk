@@ -280,6 +280,21 @@ func (mr *ClientMockRecorder) CreateSLAPolicy(ctx, slaPolicy any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSLAPolicy", reflect.TypeOf((*Client)(nil).CreateSLAPolicy), ctx, slaPolicy)
 }
 
+// CreateSupportAddress mocks base method.
+func (m *Client) CreateSupportAddress(ctx context.Context, address zendesk.SupportAddress) (zendesk.SupportAddress, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateSupportAddress", ctx, address)
+	ret0, _ := ret[0].(zendesk.SupportAddress)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateSupportAddress indicates an expected call of CreateSupportAddress.
+func (mr *ClientMockRecorder) CreateSupportAddress(ctx, address any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSupportAddress", reflect.TypeOf((*Client)(nil).CreateSupportAddress), ctx, address)
+}
+
 // CreateTarget mocks base method.
 func (m *Client) CreateTarget(ctx context.Context, ticketField zendesk.Target) (zendesk.Target, error) {
 	m.ctrl.T.Helper()
@@ -597,6 +612,20 @@ func (m *Client) DeleteSLAPolicy(ctx context.Context, id int64) error {
 func (mr *ClientMockRecorder) DeleteSLAPolicy(ctx, id any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSLAPolicy", reflect.TypeOf((*Client)(nil).DeleteSLAPolicy), ctx, id)
+}
+
+// DeleteSupportAddress mocks base method.
+func (m *Client) DeleteSupportAddress(ctx context.Context, supportAddressID int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteSupportAddress", ctx, supportAddressID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteSupportAddress indicates an expected call of DeleteSupportAddress.
+func (mr *ClientMockRecorder) DeleteSupportAddress(ctx, supportAddressID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteSupportAddress", reflect.TypeOf((*Client)(nil).DeleteSupportAddress), ctx, supportAddressID)
 }
 
 // DeleteTarget mocks base method.
@@ -1937,6 +1966,36 @@ func (m *Client) GetSearchOBP(ctx context.Context, opts *zendesk.OBPOptions) ([]
 func (mr *ClientMockRecorder) GetSearchOBP(ctx, opts any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSearchOBP", reflect.TypeOf((*Client)(nil).GetSearchOBP), ctx, opts)
+}
+
+// GetSupportAddress mocks base method.
+func (m *Client) GetSupportAddress(ctx context.Context, supportAddressID int64) (zendesk.SupportAddress, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSupportAddress", ctx, supportAddressID)
+	ret0, _ := ret[0].(zendesk.SupportAddress)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetSupportAddress indicates an expected call of GetSupportAddress.
+func (mr *ClientMockRecorder) GetSupportAddress(ctx, supportAddressID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSupportAddress", reflect.TypeOf((*Client)(nil).GetSupportAddress), ctx, supportAddressID)
+}
+
+// GetSupportAddresses mocks base method.
+func (m *Client) GetSupportAddresses(ctx context.Context) ([]zendesk.SupportAddress, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSupportAddresses", ctx)
+	ret0, _ := ret[0].([]zendesk.SupportAddress)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetSupportAddresses indicates an expected call of GetSupportAddresses.
+func (mr *ClientMockRecorder) GetSupportAddresses(ctx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSupportAddresses", reflect.TypeOf((*Client)(nil).GetSupportAddresses), ctx)
 }
 
 // GetTarget mocks base method.
@@ -3322,6 +3381,21 @@ func (mr *ClientMockRecorder) UpdateSLAPolicy(ctx, id, slaPolicy any) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSLAPolicy", reflect.TypeOf((*Client)(nil).UpdateSLAPolicy), ctx, id, slaPolicy)
 }
 
+// UpdateSupportAddress mocks base method.
+func (m *Client) UpdateSupportAddress(ctx context.Context, supportAddressID int64, address zendesk.SupportAddress) (zendesk.SupportAddress, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateSupportAddress", ctx, supportAddressID, address)
+	ret0, _ := ret[0].(zendesk.SupportAddress)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateSupportAddress indicates an expected call of UpdateSupportAddress.
+func (mr *ClientMockRecorder) UpdateSupportAddress(ctx, supportAddressID, address any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSupportAddress", reflect.TypeOf((*Client)(nil).UpdateSupportAddress), ctx, supportAddressID, address)
+}
+
 // UpdateTarget mocks base method.
 func (m *Client) UpdateTarget(ctx context.Context, ticketID int64, field zendesk.Target) (zendesk.Target, error) {
 	m.ctrl.T.Helper()
@@ -3468,4 +3542,18 @@ func (m *Client) UploadAttachment(ctx context.Context, filename, token string) z
 func (mr *ClientMockRecorder) UploadAttachment(ctx, filename, token any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UploadAttachment", reflect.TypeOf((*Client)(nil).UploadAttachment), ctx, filename, token)
+}
+
+// VerifySupportAddressForwarding mocks base method.
+func (m *Client) VerifySupportAddressForwarding(ctx context.Context, supportAddressID int64, verificationType string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "VerifySupportAddressForwarding", ctx, supportAddressID, verificationType)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// VerifySupportAddressForwarding indicates an expected call of VerifySupportAddressForwarding.
+func (mr *ClientMockRecorder) VerifySupportAddressForwarding(ctx, supportAddressID, verificationType any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "VerifySupportAddressForwarding", reflect.TypeOf((*Client)(nil).VerifySupportAddressForwarding), ctx, supportAddressID, verificationType)
 }

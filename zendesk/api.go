@@ -22,6 +22,7 @@ type API interface {
 	SearchAPI
 	SatisfactionRatingAPI
 	SLAPolicyAPI
+	SupportAddressAPI
 	TagAPI
 	TargetAPI
 	TicketAuditAPI
