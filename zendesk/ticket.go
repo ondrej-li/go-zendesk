@@ -178,6 +178,7 @@ type TicketAPI interface {
 	GetOrganizationTicketsOBP(ctx context.Context, opts *OBPOptions) ([]Ticket, Page, error)
 	GetOrganizationTicketsCBP(ctx context.Context, opts *CBPOptions) ([]Ticket, CursorPaginationMeta, error)
 	GetOrganizationTicketsIterator(ctx context.Context, opts *PaginationOptions) *Iterator[Ticket]
+	GetTicketsCount(ctx context.Context) (Count, error)
 	GetTicket(ctx context.Context, id int64) (Ticket, error)
 	GetMultipleTickets(ctx context.Context, ticketIDs []int64) ([]Ticket, error)
 	CreateTicket(ctx context.Context, ticket Ticket) (Ticket, error)
@@ -353,4 +354,22 @@ func (z *Client) DeleteTicket(ctx context.Context, ticketID int64) error {
 	}
 
 	return nil
+}
+
+// GetTicketsCount returns an approximate count of tickets in the account
+// ref: https://developer.zendesk.com/api-reference/ticketing/tickets/tickets/#count-tickets
+func (z *Client) GetTicketsCount(ctx context.Context) (Count, error) {
+	var result struct {
+		Count Count `json:"count"`
+	}
+
+	body, err := z.get(ctx, "/tickets/count.json")
+	if err != nil {
+		return Count{}, err
+	}
+
+	if err := json.Unmarshal(body, &result); err != nil {
+		return Count{}, err
+	}
+	return result.Count, nil
 }

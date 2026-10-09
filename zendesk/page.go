@@ -1,5 +1,15 @@
 package zendesk
 
+import "time"
+
+// Count is a cached record count together with the time it was last refreshed.
+// Count endpoints that return a nested count object
+// ("count": {"value": ..., "refreshed_at": ...}) decode into this type.
+type Count struct {
+	RefreshedAt *time.Time `json:"refreshed_at,omitempty"`
+	Value       int64      `json:"value"`
+}
+
 // Page is base struct for resource pagination
 type Page struct {
 	PreviousPage *string `json:"previous_page"`

@@ -467,3 +467,22 @@ func TestTicketMarshalling(t *testing.T) {
 	}
 
 }
+
+func TestGetTicketsCount(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			t.Errorf("Expected GET, got %s", r.Method)
+		}
+		w.Write([]byte(`{"count":{"refreshed_at":"2020-04-06T02:18:17Z","value":102}}`))
+	}))
+	defer mockAPI.Close()
+
+	client := newTestClient(mockAPI)
+	count, err := client.GetTicketsCount(ctx)
+	if err != nil {
+		t.Fatalf("Failed to get tickets count: %s", err)
+	}
+	if count.Value != 102 {
+		t.Fatalf("Unexpected count value %d", count.Value)
+	}
+}

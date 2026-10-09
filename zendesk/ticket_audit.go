@@ -39,6 +39,8 @@ type TicketAuditAPI interface {
 	GetTicketAuditsIterator(ctx context.Context, opts *PaginationOptions) *Iterator[TicketAudit]
 	GetTicketAuditsOBP(ctx context.Context, opts *OBPOptions) ([]TicketAudit, Page, error)
 	GetTicketAuditsCBP(ctx context.Context, opts *CBPOptions) ([]TicketAudit, CursorPaginationMeta, error)
+	GetTicketAuditsCount(ctx context.Context, ticketID int64) (Count, error)
+	MakeTicketAuditPrivate(ctx context.Context, ticketID, ticketAuditID int64) error
 }
 
 // GetAllTicketAudits list all ticket audits
@@ -111,4 +113,29 @@ func (z *Client) GetTicketAudit(ctx context.Context, ticketID, ID int64) (Ticket
 	}
 
 	return result.Audit, err
+}
+
+// GetTicketAuditsCount returns an approximate count of audits for a ticket
+// ref: https://developer.zendesk.com/api-reference/ticketing/tickets/ticket_audits/#count-audits-for-a-ticket
+func (z *Client) GetTicketAuditsCount(ctx context.Context, ticketID int64) (Count, error) {
+	var result struct {
+		Count Count `json:"count"`
+	}
+
+	body, err := z.get(ctx, fmt.Sprintf("/tickets/%d/audits/count.json", ticketID))
+	if err != nil {
+		return Count{}, err
+	}
+
+	if err := json.Unmarshal(body, &result); err != nil {
+		return Count{}, err
+	}
+	return result.Count, nil
+}
+
+// MakeTicketAuditPrivate changes the first comment on a ticket audit from public to private
+// ref: https://developer.zendesk.com/api-reference/ticketing/tickets/ticket_audits/#change-a-comment-from-public-to-private
+func (z *Client) MakeTicketAuditPrivate(ctx context.Context, ticketID, ticketAuditID int64) error {
+	_, err := z.put(ctx, fmt.Sprintf("/tickets/%d/audits/%d/make_private.json", ticketID, ticketAuditID), nil)
+	return err
 }
