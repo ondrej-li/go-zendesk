@@ -3,6 +3,7 @@ package zendesk
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -121,9 +122,25 @@ func (z *Client) SetCredential(cred Credential) {
 	z.credential = cred
 }
 
+// endpoint returns the absolute URL for path. It returns an error when the
+// client has not been configured with a subdomain or a custom endpoint yet,
+// so that an unconfigured client fails instead of panicking.
+func (z *Client) endpoint(path string) (string, error) {
+	if z.baseURL == nil {
+		return "", errors.New("zendesk: endpoint URL is not set, call SetSubdomain or SetEndpointURL")
+	}
+
+	return z.baseURL.String() + path, nil
+}
+
 // get get JSON data from API and returns its body as []bytes
 func (z *Client) get(ctx context.Context, path string) ([]byte, error) {
-	req, err := http.NewRequest(http.MethodGet, z.baseURL.String()+path, nil)
+	endpointURL, err := z.endpoint(path)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, endpointURL, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -157,7 +174,12 @@ func (z *Client) post(ctx context.Context, path string, data interface{}) ([]byt
 		return nil, err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, z.baseURL.String()+path, strings.NewReader(string(bytes)))
+	endpointURL, err := z.endpoint(path)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, endpointURL, strings.NewReader(string(bytes)))
 	if err != nil {
 		return nil, err
 	}
@@ -192,7 +214,12 @@ func (z *Client) put(ctx context.Context, path string, data interface{}) ([]byte
 		return nil, err
 	}
 
-	req, err := http.NewRequest(http.MethodPut, z.baseURL.String()+path, strings.NewReader(string(bytes)))
+	endpointURL, err := z.endpoint(path)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, endpointURL, strings.NewReader(string(bytes)))
 	if err != nil {
 		return nil, err
 	}
@@ -228,7 +255,12 @@ func (z *Client) patch(ctx context.Context, path string, data interface{}) ([]by
 		return nil, err
 	}
 
-	req, err := http.NewRequest(http.MethodPatch, z.baseURL.String()+path, strings.NewReader(string(bytes)))
+	endpointURL, err := z.endpoint(path)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPatch, endpointURL, strings.NewReader(string(bytes)))
 	if err != nil {
 		return nil, err
 	}
@@ -259,7 +291,12 @@ func (z *Client) patch(ctx context.Context, path string, data interface{}) ([]by
 
 // delete sends data to API and returns an error if unsuccessful
 func (z *Client) delete(ctx context.Context, path string) error {
-	req, err := http.NewRequest(http.MethodDelete, z.baseURL.String()+path, nil)
+	endpointURL, err := z.endpoint(path)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, endpointURL, nil)
 	if err != nil {
 		return err
 	}
@@ -300,7 +337,12 @@ func (z *Client) deleteWithBody(ctx context.Context, path string, data interface
 		payload = string(encoded)
 	}
 
-	req, err := http.NewRequest(http.MethodDelete, z.baseURL.String()+path, strings.NewReader(payload))
+	endpointURL, err := z.endpoint(path)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, endpointURL, strings.NewReader(payload))
 	if err != nil {
 		return nil, err
 	}

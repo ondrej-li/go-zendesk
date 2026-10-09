@@ -130,3 +130,22 @@ func TestRedactCommentAttachment(t *testing.T) {
 		t.Fatalf("Failed to redact ticket comment attachment: %s", err)
 	}
 }
+
+// Uploading through a client without an endpoint must fail on both Write and
+// Close rather than panicking or blocking on the uninitialized pipe.
+func TestWriteWithoutEndpoint(t *testing.T) {
+	client, err := NewClient(nil)
+	if err != nil {
+		t.Fatalf("Failed to create client: %s", err)
+	}
+
+	w := client.UploadAttachment(ctx, "foo", "bar")
+
+	if _, err := w.Write([]byte("body")); err == nil {
+		t.Fatal("Did not receive error when writing")
+	}
+
+	if _, err := w.Close(); err == nil {
+		t.Fatal("Did not receive error when closing")
+	}
+}

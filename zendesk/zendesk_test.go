@@ -560,3 +560,53 @@ func TestAddOptionsInvalidURL(t *testing.T) {
 		t.Fatal("Expected an error for an unparsable URL")
 	}
 }
+
+// A client without a subdomain or endpoint must return an error from every
+// request helper instead of panicking on a nil base URL.
+func TestRequestsWithoutEndpointReturnError(t *testing.T) {
+	client, err := NewClient(nil)
+	if err != nil {
+		t.Fatalf("Failed to create client: %s", err)
+	}
+
+	tests := []struct {
+		name string
+		call func() error
+	}{
+		{"get", func() error { _, err := client.get(ctx, "/tickets.json"); return err }},
+		{"getAs", func() error { return client.GetAs(ctx, "/tickets.json", nil) }},
+		{"getData", func() error { return getData(client, ctx, "/tickets.json", nil) }},
+		{"post", func() error { _, err := client.post(ctx, "/tickets.json", nil); return err }},
+		{"put", func() error { _, err := client.put(ctx, "/tickets.json", nil); return err }},
+		{"patch", func() error { _, err := client.patch(ctx, "/tickets.json", nil); return err }},
+		{"delete", func() error { return client.delete(ctx, "/tickets.json") }},
+		{"deleteWithBody", func() error { _, err := client.deleteWithBody(ctx, "/tickets.json", nil); return err }},
+		{"exported Get", func() error { _, err := client.Get(ctx, "/tickets.json"); return err }},
+		{"exported Post", func() error { _, err := client.Post(ctx, "/tickets.json", nil); return err }},
+		{"exported Put", func() error { _, err := client.Put(ctx, "/tickets.json", nil); return err }},
+		{"exported Delete", func() error { return client.Delete(ctx, "/tickets.json") }},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.call()
+			if err == nil {
+				t.Fatal("Expected error, got nil")
+			}
+			if !strings.Contains(err.Error(), "endpoint URL is not set") {
+				t.Fatalf("Unexpected error: %s", err)
+			}
+		})
+	}
+}
+
+func TestEndpointWithoutBaseURL(t *testing.T) {
+	client, err := NewClient(nil)
+	if err != nil {
+		t.Fatalf("Failed to create client: %s", err)
+	}
+
+	if _, err := client.endpoint("/tickets.json"); err == nil {
+		t.Fatal("Expected error, got nil")
+	}
+}
