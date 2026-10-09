@@ -355,6 +355,21 @@ func (mr *ClientMockRecorder) CreateTicketForm(ctx, ticketForm any) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTicketForm", reflect.TypeOf((*Client)(nil).CreateTicketForm), ctx, ticketForm)
 }
 
+// CreateTicketSatisfactionRating mocks base method.
+func (m *Client) CreateTicketSatisfactionRating(ctx context.Context, ticketID int64, rating zendesk.SatisfactionRating) (zendesk.SatisfactionRating, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateTicketSatisfactionRating", ctx, ticketID, rating)
+	ret0, _ := ret[0].(zendesk.SatisfactionRating)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateTicketSatisfactionRating indicates an expected call of CreateTicketSatisfactionRating.
+func (mr *ClientMockRecorder) CreateTicketSatisfactionRating(ctx, ticketID, rating any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTicketSatisfactionRating", reflect.TypeOf((*Client)(nil).CreateTicketSatisfactionRating), ctx, ticketID, rating)
+}
+
 // CreateTrigger mocks base method.
 func (m *Client) CreateTrigger(ctx context.Context, trigger zendesk.Trigger) (zendesk.Trigger, error) {
 	m.ctrl.T.Helper()
@@ -1830,6 +1845,52 @@ func (m *Client) GetSLAPolicy(ctx context.Context, id int64) (zendesk.SLAPolicy,
 func (mr *ClientMockRecorder) GetSLAPolicy(ctx, id any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSLAPolicy", reflect.TypeOf((*Client)(nil).GetSLAPolicy), ctx, id)
+}
+
+// GetSatisfactionRating mocks base method.
+func (m *Client) GetSatisfactionRating(ctx context.Context, satisfactionRatingID int64) (zendesk.SatisfactionRating, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSatisfactionRating", ctx, satisfactionRatingID)
+	ret0, _ := ret[0].(zendesk.SatisfactionRating)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetSatisfactionRating indicates an expected call of GetSatisfactionRating.
+func (mr *ClientMockRecorder) GetSatisfactionRating(ctx, satisfactionRatingID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSatisfactionRating", reflect.TypeOf((*Client)(nil).GetSatisfactionRating), ctx, satisfactionRatingID)
+}
+
+// GetSatisfactionRatings mocks base method.
+func (m *Client) GetSatisfactionRatings(ctx context.Context, opts *zendesk.SatisfactionRatingListOptions) ([]zendesk.SatisfactionRating, zendesk.Page, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSatisfactionRatings", ctx, opts)
+	ret0, _ := ret[0].([]zendesk.SatisfactionRating)
+	ret1, _ := ret[1].(zendesk.Page)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetSatisfactionRatings indicates an expected call of GetSatisfactionRatings.
+func (mr *ClientMockRecorder) GetSatisfactionRatings(ctx, opts any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSatisfactionRatings", reflect.TypeOf((*Client)(nil).GetSatisfactionRatings), ctx, opts)
+}
+
+// GetSatisfactionRatingsCount mocks base method.
+func (m *Client) GetSatisfactionRatingsCount(ctx context.Context, opts *zendesk.SatisfactionRatingListOptions) (zendesk.SatisfactionRatingCount, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSatisfactionRatingsCount", ctx, opts)
+	ret0, _ := ret[0].(zendesk.SatisfactionRatingCount)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetSatisfactionRatingsCount indicates an expected call of GetSatisfactionRatingsCount.
+func (mr *ClientMockRecorder) GetSatisfactionRatingsCount(ctx, opts any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSatisfactionRatingsCount", reflect.TypeOf((*Client)(nil).GetSatisfactionRatingsCount), ctx, opts)
 }
 
 // GetSearchCBP mocks base method.

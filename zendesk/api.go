@@ -20,6 +20,7 @@ type API interface {
 	OrganizationFieldAPI
 	OrganizationMembershipAPI
 	SearchAPI
+	SatisfactionRatingAPI
 	SLAPolicyAPI
 	TagAPI
 	TargetAPI
