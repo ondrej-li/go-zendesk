@@ -385,6 +385,21 @@ func (mr *ClientMockRecorder) CreateTicketSatisfactionRating(ctx, ticketID, rati
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTicketSatisfactionRating", reflect.TypeOf((*Client)(nil).CreateTicketSatisfactionRating), ctx, ticketID, rating)
 }
 
+// CreateTicketSkip mocks base method.
+func (m *Client) CreateTicketSkip(ctx context.Context, opts zendesk.TicketSkipOptions) (zendesk.TicketSkip, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateTicketSkip", ctx, opts)
+	ret0, _ := ret[0].(zendesk.TicketSkip)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateTicketSkip indicates an expected call of CreateTicketSkip.
+func (mr *ClientMockRecorder) CreateTicketSkip(ctx, opts any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTicketSkip", reflect.TypeOf((*Client)(nil).CreateTicketSkip), ctx, opts)
+}
+
 // CreateTrigger mocks base method.
 func (m *Client) CreateTrigger(ctx context.Context, trigger zendesk.Trigger) (zendesk.Trigger, error) {
 	m.ctrl.T.Helper()
@@ -2364,6 +2379,54 @@ func (m *Client) GetTicketFormsShowMany(ctx context.Context, ids []int64) ([]zen
 func (mr *ClientMockRecorder) GetTicketFormsShowMany(ctx, ids any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTicketFormsShowMany", reflect.TypeOf((*Client)(nil).GetTicketFormsShowMany), ctx, ids)
+}
+
+// GetTicketSkips mocks base method.
+func (m *Client) GetTicketSkips(ctx context.Context, opts *zendesk.TicketSkipListOptions) ([]zendesk.TicketSkip, zendesk.Page, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTicketSkips", ctx, opts)
+	ret0, _ := ret[0].([]zendesk.TicketSkip)
+	ret1, _ := ret[1].(zendesk.Page)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetTicketSkips indicates an expected call of GetTicketSkips.
+func (mr *ClientMockRecorder) GetTicketSkips(ctx, opts any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTicketSkips", reflect.TypeOf((*Client)(nil).GetTicketSkips), ctx, opts)
+}
+
+// GetTicketSkipsByTicket mocks base method.
+func (m *Client) GetTicketSkipsByTicket(ctx context.Context, ticketID int64, opts *zendesk.TicketSkipListOptions) ([]zendesk.TicketSkip, zendesk.Page, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTicketSkipsByTicket", ctx, ticketID, opts)
+	ret0, _ := ret[0].([]zendesk.TicketSkip)
+	ret1, _ := ret[1].(zendesk.Page)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetTicketSkipsByTicket indicates an expected call of GetTicketSkipsByTicket.
+func (mr *ClientMockRecorder) GetTicketSkipsByTicket(ctx, ticketID, opts any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTicketSkipsByTicket", reflect.TypeOf((*Client)(nil).GetTicketSkipsByTicket), ctx, ticketID, opts)
+}
+
+// GetTicketSkipsByUser mocks base method.
+func (m *Client) GetTicketSkipsByUser(ctx context.Context, userID int64, opts *zendesk.TicketSkipListOptions) ([]zendesk.TicketSkip, zendesk.Page, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTicketSkipsByUser", ctx, userID, opts)
+	ret0, _ := ret[0].([]zendesk.TicketSkip)
+	ret1, _ := ret[1].(zendesk.Page)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
+}
+
+// GetTicketSkipsByUser indicates an expected call of GetTicketSkipsByUser.
+func (mr *ClientMockRecorder) GetTicketSkipsByUser(ctx, userID, opts any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTicketSkipsByUser", reflect.TypeOf((*Client)(nil).GetTicketSkipsByUser), ctx, userID, opts)
 }
 
 // GetTicketTags mocks base method.
