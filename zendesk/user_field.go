@@ -3,6 +3,7 @@ package zendesk
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"time"
 )
 
@@ -33,6 +34,9 @@ type UserFieldListOptions struct {
 type UserFieldAPI interface {
 	GetUserFields(ctx context.Context, opts *UserFieldListOptions) ([]UserField, Page, error)
 	CreateUserField(ctx context.Context, userField UserField) (UserField, error)
+	GetUserField(ctx context.Context, userFieldID int64) (UserField, error)
+	UpdateUserField(ctx context.Context, userFieldID int64, userField UserField) (UserField, error)
+	DeleteUserField(ctx context.Context, userFieldID int64) error
 	GetUserFieldsIterator(ctx context.Context, opts *PaginationOptions) *Iterator[UserField]
 	GetUserFieldsOBP(ctx context.Context, opts *OBPOptions) ([]UserField, Page, error)
 	GetUserFieldsCBP(ctx context.Context, opts *CBPOptions) ([]UserField, CursorPaginationMeta, error)
@@ -87,4 +91,47 @@ func (z *Client) CreateUserField(ctx context.Context, userField UserField) (User
 		return UserField{}, err
 	}
 	return result.UserField, nil
+}
+
+// GetUserField gets a specified user field
+// ref: https://developer.zendesk.com/api-reference/ticketing/users/user_fields/#show-user-field
+func (z *Client) GetUserField(ctx context.Context, userFieldID int64) (UserField, error) {
+	var result struct {
+		UserField UserField `json:"user_field"`
+	}
+
+	body, err := z.get(ctx, fmt.Sprintf("/user_fields/%d.json", userFieldID))
+	if err != nil {
+		return UserField{}, err
+	}
+
+	if err := json.Unmarshal(body, &result); err != nil {
+		return UserField{}, err
+	}
+	return result.UserField, nil
+}
+
+// UpdateUserField updates a specified user field
+// ref: https://developer.zendesk.com/api-reference/ticketing/users/user_fields/#update-user-field
+func (z *Client) UpdateUserField(ctx context.Context, userFieldID int64, userField UserField) (UserField, error) {
+	var data, result struct {
+		UserField UserField `json:"user_field"`
+	}
+	data.UserField = userField
+
+	body, err := z.put(ctx, fmt.Sprintf("/user_fields/%d.json", userFieldID), data)
+	if err != nil {
+		return UserField{}, err
+	}
+
+	if err := json.Unmarshal(body, &result); err != nil {
+		return UserField{}, err
+	}
+	return result.UserField, nil
+}
+
+// DeleteUserField deletes a specified user field
+// ref: https://developer.zendesk.com/api-reference/ticketing/users/user_fields/#delete-user-field
+func (z *Client) DeleteUserField(ctx context.Context, userFieldID int64) error {
+	return z.delete(ctx, fmt.Sprintf("/user_fields/%d.json", userFieldID))
 }

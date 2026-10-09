@@ -3,6 +3,7 @@ package zendesk
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"time"
 )
 
@@ -32,6 +33,9 @@ type OrganizationField struct {
 type OrganizationFieldAPI interface {
 	GetOrganizationFields(ctx context.Context) ([]OrganizationField, Page, error)
 	CreateOrganizationField(ctx context.Context, organizationField OrganizationField) (OrganizationField, error)
+	GetOrganizationField(ctx context.Context, organizationFieldID int64) (OrganizationField, error)
+	UpdateOrganizationField(ctx context.Context, organizationFieldID int64, organizationField OrganizationField) (OrganizationField, error)
+	DeleteOrganizationField(ctx context.Context, organizationFieldID int64) error
 	GetOrganizationFieldsIterator(ctx context.Context, opts *PaginationOptions) *Iterator[OrganizationField]
 	GetOrganizationFieldsOBP(ctx context.Context, opts *OBPOptions) ([]OrganizationField, Page, error)
 	GetOrganizationFieldsCBP(ctx context.Context, opts *CBPOptions) ([]OrganizationField, CursorPaginationMeta, error)
@@ -75,4 +79,47 @@ func (z *Client) CreateOrganizationField(ctx context.Context, organizationField 
 		return OrganizationField{}, err
 	}
 	return result.OrganizationField, nil
+}
+
+// GetOrganizationField gets a specified organization field
+// ref: https://developer.zendesk.com/api-reference/ticketing/organizations/organization_fields/#show-organization-field
+func (z *Client) GetOrganizationField(ctx context.Context, organizationFieldID int64) (OrganizationField, error) {
+	var result struct {
+		OrganizationField OrganizationField `json:"organization_field"`
+	}
+
+	body, err := z.get(ctx, fmt.Sprintf("/organization_fields/%d.json", organizationFieldID))
+	if err != nil {
+		return OrganizationField{}, err
+	}
+
+	if err := json.Unmarshal(body, &result); err != nil {
+		return OrganizationField{}, err
+	}
+	return result.OrganizationField, nil
+}
+
+// UpdateOrganizationField updates a specified organization field
+// ref: https://developer.zendesk.com/api-reference/ticketing/organizations/organization_fields/#update-organization-field
+func (z *Client) UpdateOrganizationField(ctx context.Context, organizationFieldID int64, organizationField OrganizationField) (OrganizationField, error) {
+	var data, result struct {
+		OrganizationField OrganizationField `json:"organization_field"`
+	}
+	data.OrganizationField = organizationField
+
+	body, err := z.put(ctx, fmt.Sprintf("/organization_fields/%d.json", organizationFieldID), data)
+	if err != nil {
+		return OrganizationField{}, err
+	}
+
+	if err := json.Unmarshal(body, &result); err != nil {
+		return OrganizationField{}, err
+	}
+	return result.OrganizationField, nil
+}
+
+// DeleteOrganizationField deletes a specified organization field
+// ref: https://developer.zendesk.com/api-reference/ticketing/organizations/organization_fields/#delete-organization-field
+func (z *Client) DeleteOrganizationField(ctx context.Context, organizationFieldID int64) error {
+	return z.delete(ctx, fmt.Sprintf("/organization_fields/%d.json", organizationFieldID))
 }
