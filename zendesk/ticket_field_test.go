@@ -1,6 +1,7 @@
 package zendesk
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -74,5 +75,52 @@ func TestDeleteTicketField(t *testing.T) {
 	err := c.DeleteTicketField(ctx, 1234)
 	if err != nil {
 		t.Fatalf("Failed to delete ticket field: %s", err)
+	}
+}
+
+func TestGetTicketFieldsShowMany(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			t.Errorf("Expected GET, got %s", r.Method)
+		}
+		if got := r.URL.Query().Get("ids"); got != "1,2,3" {
+			t.Errorf("Expected ids query parameter %q, got %q", "1,2,3", got)
+		}
+		w.Write([]byte(`{"ticket_fields":[{"id":1},{"id":2}]}`))
+	}))
+	defer mockAPI.Close()
+
+	client := newTestClient(mockAPI)
+	fields, err := client.GetTicketFieldsShowMany(ctx, []int64{1, 2, 3})
+	if err != nil {
+		t.Fatalf("Failed to get ticket fields: %s", err)
+	}
+	if len(fields) != 2 {
+		t.Fatalf("Expected 2 ticket fields, got %d", len(fields))
+	}
+}
+
+func TestReorderTicketFields(t *testing.T) {
+	var received struct {
+		TicketFieldIDs []int64 `json:"ticket_field_ids"`
+	}
+
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPut {
+			t.Errorf("Expected PUT, got %s", r.Method)
+		}
+		if err := json.NewDecoder(r.Body).Decode(&received); err != nil {
+			t.Errorf("Failed to decode request body: %s", err)
+		}
+		w.Write([]byte(``))
+	}))
+	defer mockAPI.Close()
+
+	client := newTestClient(mockAPI)
+	if err := client.ReorderTicketFields(ctx, []int64{2, 23, 46}); err != nil {
+		t.Fatalf("Failed to reorder ticket fields: %s", err)
+	}
+	if len(received.TicketFieldIDs) != 3 || received.TicketFieldIDs[0] != 2 {
+		t.Fatalf("Unexpected request ids %v", received.TicketFieldIDs)
 	}
 }

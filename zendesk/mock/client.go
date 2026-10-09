@@ -2200,6 +2200,21 @@ func (mr *ClientMockRecorder) GetTicketFieldsOBP(ctx, opts any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTicketFieldsOBP", reflect.TypeOf((*Client)(nil).GetTicketFieldsOBP), ctx, opts)
 }
 
+// GetTicketFieldsShowMany mocks base method.
+func (m *Client) GetTicketFieldsShowMany(ctx context.Context, ids []int64) ([]zendesk.TicketField, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTicketFieldsShowMany", ctx, ids)
+	ret0, _ := ret[0].([]zendesk.TicketField)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTicketFieldsShowMany indicates an expected call of GetTicketFieldsShowMany.
+func (mr *ClientMockRecorder) GetTicketFieldsShowMany(ctx, ids any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTicketFieldsShowMany", reflect.TypeOf((*Client)(nil).GetTicketFieldsShowMany), ctx, ids)
+}
+
 // GetTicketForm mocks base method.
 func (m *Client) GetTicketForm(ctx context.Context, id int64) (zendesk.TicketForm, error) {
 	m.ctrl.T.Helper()
@@ -2275,6 +2290,21 @@ func (m *Client) GetTicketFormsOBP(ctx context.Context, opts *zendesk.OBPOptions
 func (mr *ClientMockRecorder) GetTicketFormsOBP(ctx, opts any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTicketFormsOBP", reflect.TypeOf((*Client)(nil).GetTicketFormsOBP), ctx, opts)
+}
+
+// GetTicketFormsShowMany mocks base method.
+func (m *Client) GetTicketFormsShowMany(ctx context.Context, ids []int64) ([]zendesk.TicketForm, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetTicketFormsShowMany", ctx, ids)
+	ret0, _ := ret[0].([]zendesk.TicketForm)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetTicketFormsShowMany indicates an expected call of GetTicketFormsShowMany.
+func (mr *ClientMockRecorder) GetTicketFormsShowMany(ctx, ids any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTicketFormsShowMany", reflect.TypeOf((*Client)(nil).GetTicketFormsShowMany), ctx, ids)
 }
 
 // GetTicketTags mocks base method.
@@ -2944,6 +2974,35 @@ func (m *Client) RedactTicketComment(ctx context.Context, ticketCommentID int64,
 func (mr *ClientMockRecorder) RedactTicketComment(ctx, ticketCommentID, body any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RedactTicketComment", reflect.TypeOf((*Client)(nil).RedactTicketComment), ctx, ticketCommentID, body)
+}
+
+// ReorderTicketFields mocks base method.
+func (m *Client) ReorderTicketFields(ctx context.Context, ticketFieldIDs []int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReorderTicketFields", ctx, ticketFieldIDs)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ReorderTicketFields indicates an expected call of ReorderTicketFields.
+func (mr *ClientMockRecorder) ReorderTicketFields(ctx, ticketFieldIDs any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReorderTicketFields", reflect.TypeOf((*Client)(nil).ReorderTicketFields), ctx, ticketFieldIDs)
+}
+
+// ReorderTicketForms mocks base method.
+func (m *Client) ReorderTicketForms(ctx context.Context, ticketFormIDs []int64) ([]zendesk.TicketForm, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ReorderTicketForms", ctx, ticketFormIDs)
+	ret0, _ := ret[0].([]zendesk.TicketForm)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ReorderTicketForms indicates an expected call of ReorderTicketForms.
+func (mr *ClientMockRecorder) ReorderTicketForms(ctx, ticketFormIDs any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ReorderTicketForms", reflect.TypeOf((*Client)(nil).ReorderTicketForms), ctx, ticketFormIDs)
 }
 
 // Search mocks base method.

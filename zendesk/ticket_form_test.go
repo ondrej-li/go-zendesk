@@ -1,6 +1,7 @@
 package zendesk
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -113,5 +114,56 @@ func TestUpdateTicketFormFailure(t *testing.T) {
 	_, err := c.UpdateTicketForm(ctx, 1234, TicketForm{})
 	if err == nil {
 		t.Fatal("Client did not return error when api failed")
+	}
+}
+
+func TestGetTicketFormsShowMany(t *testing.T) {
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			t.Errorf("Expected GET, got %s", r.Method)
+		}
+		if got := r.URL.Query().Get("ids"); got != "1,2" {
+			t.Errorf("Expected ids query parameter %q, got %q", "1,2", got)
+		}
+		w.Write([]byte(`{"ticket_forms":[{"id":1},{"id":2}]}`))
+	}))
+	defer mockAPI.Close()
+
+	client := newTestClient(mockAPI)
+	forms, err := client.GetTicketFormsShowMany(ctx, []int64{1, 2})
+	if err != nil {
+		t.Fatalf("Failed to get ticket forms: %s", err)
+	}
+	if len(forms) != 2 {
+		t.Fatalf("Expected 2 ticket forms, got %d", len(forms))
+	}
+}
+
+func TestReorderTicketForms(t *testing.T) {
+	var received struct {
+		TicketFormIDs []int64 `json:"ticket_form_ids"`
+	}
+
+	mockAPI := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPut {
+			t.Errorf("Expected PUT, got %s", r.Method)
+		}
+		if err := json.NewDecoder(r.Body).Decode(&received); err != nil {
+			t.Errorf("Failed to decode request body: %s", err)
+		}
+		w.Write([]byte(`{"ticket_forms":[{"id":2},{"id":23}]}`))
+	}))
+	defer mockAPI.Close()
+
+	client := newTestClient(mockAPI)
+	forms, err := client.ReorderTicketForms(ctx, []int64{2, 23})
+	if err != nil {
+		t.Fatalf("Failed to reorder ticket forms: %s", err)
+	}
+	if len(received.TicketFormIDs) != 2 || received.TicketFormIDs[0] != 2 {
+		t.Fatalf("Unexpected request ids %v", received.TicketFormIDs)
+	}
+	if len(forms) != 2 {
+		t.Fatalf("Expected 2 ticket forms in the response, got %d", len(forms))
 	}
 }
