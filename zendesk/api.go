@@ -30,6 +30,7 @@ type API interface {
 	TicketCommentAPI
 	TicketFieldAPI
 	TicketFormAPI
+	TicketMetricsAPI
 	TicketSkipAPI
 	TriggerAPI
 	UserAPI
