@@ -2,6 +2,7 @@ package zendesk
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"testing"
 )
@@ -96,5 +97,40 @@ func TestOptionsError(t *testing.T) {
 	expected := "invalid options: search options"
 	if v := err.Error(); v != expected {
 		t.Fatalf("Error %s did not have expected value %s", v, expected)
+	}
+}
+
+func TestErrorWithoutResponse(t *testing.T) {
+	body := []byte(`{"error":"RecordNotFound"}`)
+	err := NewError(body, nil)
+
+	if v := err.Error(); v == "" {
+		t.Fatal("Expected a non-empty error message")
+	} else if v != string(body) {
+		t.Fatalf("Error %s did not have expected value %s", v, body)
+	}
+
+	if v := err.Status(); v != 0 {
+		t.Fatalf("Expected status 0 for a response-less error, got %d", v)
+	}
+
+	if v := err.Headers(); v != nil {
+		t.Fatalf("Expected no headers for a response-less error, got %v", v)
+	}
+
+	read, err2 := ioutil.ReadAll(err.Body())
+	if err2 != nil {
+		t.Fatalf("Failed to read body: %s", err2)
+	}
+	if string(read) != string(body) {
+		t.Fatalf("Body %s did not have expected value %s", read, body)
+	}
+}
+
+func TestErrorWithoutResponseAndBody(t *testing.T) {
+	err := NewError(nil, nil)
+
+	if v := err.Error(); v == "" {
+		t.Fatal("Expected a non-empty error message")
 	}
 }

@@ -53,6 +53,7 @@ type UploadWriter interface {
 type writer struct {
 	*Client
 	once     sync.Once
+	openErr  error
 	w        io.WriteCloser
 	filename string
 	token    string
@@ -61,12 +62,16 @@ type writer struct {
 }
 
 func (wr *writer) open() error {
+	endpointURL, err := wr.endpoint("/uploads.json")
+	if err != nil {
+		return err
+	}
+
 	r, w := io.Pipe()
 	wr.c = make(chan result)
 
 	wr.w = w
-	path := "/uploads.json"
-	req, err := http.NewRequest(http.MethodPost, wr.baseURL.String()+path, r)
+	req, err := http.NewRequest(http.MethodPost, endpointURL, r)
 	if err != nil {
 		return err
 	}
@@ -111,17 +116,24 @@ func (wr *writer) open() error {
 
 func (wr *writer) Write(p []byte) (n int, err error) {
 	wr.once.Do(func() {
-		err = wr.open()
+		wr.openErr = wr.open()
 	})
 
-	if err != nil {
-		return 0, err
+	if wr.openErr != nil {
+		return 0, wr.openErr
 	}
 
 	return wr.w.Write(p)
 }
 
 func (wr *writer) Close() (Upload, error) {
+	// The initial request may have failed before the writer was usable, for
+	// example when the client has no endpoint configured. Report that error
+	// instead of dereferencing the uninitialized pipe.
+	if wr.openErr != nil {
+		return Upload{}, wr.openErr
+	}
+
 	defer close(wr.c)
 	err := wr.w.Close()
 	if err != nil {
